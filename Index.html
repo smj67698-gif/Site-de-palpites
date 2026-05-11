@@ -1,249 +1,855 @@
 <!DOCTYPE html>
 <html lang="pt">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-
-  <title>SoccerPro Analytics</title>
-
-  <!-- Tailwind -->
-  <script src="https://cdn.tailwindcss.com"></script>
-
-  <!-- React -->
-  <script src="https://unpkg.com/react@18/umd/react.development.js"></script>
-  <script src="https://unpkg.com/react-dom@18/umd/react-dom.development.js"></script>
-
-  <!-- Babel -->
-  <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
-
-  <!-- Font -->
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet"/>
-
-  <style>
-    body { font-family: Inter, sans-serif; }
-  </style>
-
-</head>
-
-<body class="bg-[#0a0f1c]">
-
-<div id="root"></div>
-
-<script type="text/babel">
-
-const { useState } = React;
-
-function App(){
-
-  const [page,setPage] = useState("home");
-
-  return(
-
-    <div className="min-h-screen text-white pb-28">
-
-      {/* HEADER PROFISSIONAL */}
-      <div className="sticky top-0 z-50 bg-[#0f172a]/90 backdrop-blur-xl border-b border-white/10">
-
-        <div className="flex justify-center items-center py-4">
-
-          <div className="flex items-center gap-3">
-
-            <span className="text-xl">⚽</span>
-
-            <h1 className="text-xl font-bold tracking-[4px] text-emerald-400">
-              SOCCERPRO
-            </h1>
-
-            <span className="text-xl">⚽</span>
-
-          </div>
-
-        </div>
-
-        {/* NAV */}
-        <div className="flex justify-around py-3 border-t border-white/5">
-
-          <button onClick={()=>setPage("home")} className="text-sm text-gray-300">Home</button>
-          <button onClick={()=>setPage("social")} className="text-sm text-gray-300">Comunidade</button>
-          <button onClick={()=>setPage("terms")} className="text-sm text-gray-300">Termos</button>
-
-        </div>
-
-      </div>
-
-      {/* HOME DASHBOARD */}
-      {page === "home" && (
-
-        <div className="p-5 space-y-5">
-
-          {/* HERO */}
-          <div className="bg-gradient-to-br from-[#111827] to-[#0f172a] border border-white/10 rounded-3xl p-6">
-
-            <h1 className="text-2xl font-bold text-emerald-400 mb-2">
-              Football Analytics Platform
-            </h1>
-
-            <p className="text-gray-400 text-sm leading-6">
-              Análises avançadas de jogos, estatísticas e previsões baseadas em dados reais.
-            </p>
-
-          </div>
-
-          {/* CARDS */}
-          <div className="grid grid-cols-2 gap-3">
-
-            <div className="bg-[#111827] border border-white/10 rounded-2xl p-4">
-              <p className="text-gray-400 text-xs">Precisão</p>
-              <p className="text-emerald-400 text-xl font-bold">92%</p>
-            </div>
-
-            <div className="bg-[#111827] border border-white/10 rounded-2xl p-4">
-              <p className="text-gray-400 text-xs">Jogos</p>
-              <p className="text-emerald-400 text-xl font-bold">+10K</p>
-            </div>
-
-          </div>
-
-          {/* FEATURE */}
-          <div className="bg-[#111827] border border-white/10 rounded-3xl p-5">
-
-            <h2 className="text-lg font-semibold mb-2">
-              📊 Análise Inteligente
-            </h2>
-
-            <p className="text-gray-400 text-sm leading-6">
-              Modelos estatísticos para prever golos, vitória, escanteios e cartões.
-            </p>
-
-          </div>
-
-        </div>
-
-      )}
-
-      {/* CALCULAR */}
-      {page === "calc" && (
-
-        <div className="p-5 space-y-5">
-
-          <h1 className="text-xl font-bold text-emerald-400">
-            Match Prediction Engine
-          </h1>
-
-          <p className="text-gray-400 text-sm">
-            Insere as equipas para gerar análise automática.
-          </p>
-
-          <input
-            id="teamA"
-            placeholder="Equipa Casa"
-            className="w-full p-4 rounded-2xl bg-[#111827] border border-white/10"
-          />
-
-          <input
-            id="teamB"
-            placeholder="Equipa Fora"
-            className="w-full p-4 rounded-2xl bg-[#111827] border border-white/10"
-          />
-
-          <button
-            onClick={async ()=>{
-
-              const teamA = document.getElementById("teamA").value;
-              const teamB = document.getElementById("teamB").value;
-
-              if(!teamA || !teamB){
-                alert("Preenche as equipas");
-                return;
-              }
-
-              try{
-
-                const res = await fetch(
-                  `https://sua-api.com/prediction?home=${teamA}&away=${teamB}`
-                );
-
-                const data = await res.json();
-
-                document.getElementById("result").innerHTML =
-                  JSON.stringify(data,null,2);
-
-              }catch(err){
-                document.getElementById("result").innerHTML =
-                  "Erro na API";
-              }
-
-            }}
-
-            className="w-full py-4 rounded-2xl bg-emerald-500 font-bold"
-          >
-            Gerar Análise
-          </button>
-
-          <div
-            id="result"
-            className="bg-[#111827] border border-white/10 rounded-2xl p-5 text-gray-300 whitespace-pre-wrap"
-          >
-            Resultado da análise aparecerá aqui...
-          </div>
-
-        </div>
-
-      )}
-
-      {/* SOCIAL */}
-      {page === "social" && (
-
-        <div className="p-5">
-
-          <h1 className="text-emerald-400 font-bold mb-3">
-            Comunidade
-          </h1>
-
-          <div className="bg-[#111827] p-4 rounded-2xl border border-white/10">
-            🔥 Jogador: “Melhor app de previsões que já usei”
-          </div>
-
-        </div>
-
-      )}
-
-      {/* TERMS */}
-      {page === "terms" && (
-
-        <div className="p-5 text-gray-400 text-sm leading-6">
-
-          <h1 className="text-emerald-400 font-bold mb-3">
-            Termos
-          </h1>
-
-          Apenas análise estatística de futebol. Sem garantias de resultados.
-
-        </div>
-
-      )}
-
-      {/* BOTTOM CTA */}
-      <div className="fixed bottom-0 left-0 w-full bg-[#0f172a] border-t border-white/10 p-4">
-
-        <button
-          onClick={()=>setPage("calc")}
-          className="w-full py-4 rounded-2xl bg-gradient-to-r from-emerald-500 to-green-400 font-bold"
-        >
-          Calcular palpite 
-        </button>
-
-      </div>
-
-    </div>
-
-  );
-
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Soccer Pro — Palpites Inteligentes</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Outfit:wght@300;400;500;600;700&family=Space+Mono:ital@0;1&display=swap" rel="stylesheet"/>
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+
+:root{
+  --black:#070810;
+  --deep:#0d0f1a;
+  --card:#131625;
+  --border:#1e2235;
+  --green:#00e676;
+  --green-dim:#00b85a;
+  --green-glow:rgba(0,230,118,0.18);
+  --white:#f0f4ff;
+  --muted:#7a82a0;
+  --accent:#ff6b35;
+  --nav1-h:52px;
+  --nav2-h:58px;
+  --top-offset:110px;
 }
 
-ReactDOM.createRoot(document.getElementById("root")).render(<App/>);
+html{scroll-behavior:smooth}
+body{background:var(--black);color:var(--white);font-family:'Outfit',sans-serif;min-height:100vh;overflow-x:hidden}
 
+/* ── SCROLLBAR ── */
+::-webkit-scrollbar{width:4px}
+::-webkit-scrollbar-track{background:var(--deep)}
+::-webkit-scrollbar-thumb{background:var(--green-dim);border-radius:2px}
+
+/* ══════════════════════════════════════════
+   NAVBAR 1 — Marca
+══════════════════════════════════════════ */
+#nav1{
+  position:fixed;top:0;left:0;right:0;z-index:1000;
+  height:var(--nav1-h);
+  background:var(--black);
+  border-bottom:1px solid var(--green);
+  display:flex;align-items:center;justify-content:center;
+}
+#nav1 .brand{
+  font-family:'Bebas Neue',sans-serif;
+  font-size:1.6rem;letter-spacing:.25em;
+  color:var(--green);
+  text-shadow:0 0 18px var(--green-glow);
+}
+#nav1 .brand span{color:var(--white)}
+
+/* ══════════════════════════════════════════
+   NAVBAR 2 — Navegação
+══════════════════════════════════════════ */
+#nav2{
+  position:fixed;top:var(--nav1-h);left:0;right:0;z-index:999;
+  height:var(--nav2-h);
+  background:rgba(13,15,26,.95);
+  backdrop-filter:blur(12px);
+  border-bottom:1px solid var(--border);
+  display:flex;align-items:center;justify-content:center;
+  gap:6px;
+}
+.nav-link{
+  font-family:'Outfit',sans-serif;font-weight:500;font-size:.88rem;
+  letter-spacing:.08em;text-transform:uppercase;
+  color:var(--muted);
+  padding:8px 22px;border-radius:6px;
+  cursor:pointer;border:none;background:none;
+  transition:all .25s;text-decoration:none;
+}
+.nav-link:hover,.nav-link.active{color:var(--green);background:var(--green-glow)}
+
+/* ══════════════════════════════════════════
+   PÁGINAS
+══════════════════════════════════════════ */
+.page{display:none;padding-top:var(--top-offset);min-height:100vh}
+.page.active{display:block}
+
+/* ══════════════════════════════════════════
+   HOME
+══════════════════════════════════════════ */
+.hero{
+  position:relative;overflow:hidden;
+  min-height:calc(100vh - var(--top-offset));
+  display:flex;flex-direction:column;align-items:center;justify-content:center;
+  text-align:center;padding:60px 24px;
+}
+.hero-bg{
+  position:absolute;inset:0;
+  background:
+    radial-gradient(ellipse 70% 50% at 50% 0%, rgba(0,230,118,.12) 0%, transparent 70%),
+    radial-gradient(ellipse 40% 40% at 80% 80%, rgba(255,107,53,.07) 0%, transparent 60%);
+}
+.hero-grid{
+  position:absolute;inset:0;
+  background-image:
+    linear-gradient(var(--border) 1px,transparent 1px),
+    linear-gradient(90deg,var(--border) 1px,transparent 1px);
+  background-size:60px 60px;
+  opacity:.35;
+  mask-image:radial-gradient(ellipse 80% 60% at 50% 40%,black,transparent);
+}
+.hero-badge{
+  display:inline-flex;align-items:center;gap:8px;
+  border:1px solid var(--green);border-radius:100px;
+  padding:6px 18px;font-size:.75rem;font-weight:600;
+  color:var(--green);letter-spacing:.12em;text-transform:uppercase;
+  margin-bottom:32px;
+  background:var(--green-glow);
+  animation:fadeUp .6s ease both;
+}
+.hero-badge::before{content:'⚽';font-size:1rem}
+.hero h1{
+  font-family:'Bebas Neue',sans-serif;
+  font-size:clamp(3.5rem,9vw,7rem);line-height:.95;
+  letter-spacing:.04em;
+  animation:fadeUp .7s .1s ease both;
+}
+.hero h1 em{color:var(--green);font-style:normal;display:block}
+.hero p.sub{
+  max-width:580px;font-size:1.1rem;color:var(--muted);line-height:1.7;
+  margin:24px auto 0;
+  animation:fadeUp .7s .2s ease both;
+}
+.hero-stats{
+  display:flex;gap:40px;margin-top:56px;flex-wrap:wrap;justify-content:center;
+  animation:fadeUp .7s .35s ease both;
+}
+.stat-item{text-align:center}
+.stat-num{
+  font-family:'Bebas Neue',sans-serif;font-size:2.6rem;
+  color:var(--green);letter-spacing:.05em;
+  text-shadow:0 0 20px var(--green-glow);
+}
+.stat-label{font-size:.75rem;color:var(--muted);text-transform:uppercase;letter-spacing:.1em;margin-top:2px}
+
+.features{
+  display:grid;grid-template-columns:repeat(auto-fit,minmax(270px,1fr));
+  gap:20px;max-width:1100px;margin:80px auto;padding:0 24px;
+}
+.feat-card{
+  background:var(--card);border:1px solid var(--border);border-radius:16px;
+  padding:32px 28px;position:relative;overflow:hidden;
+  transition:transform .3s,border-color .3s;
+}
+.feat-card:hover{transform:translateY(-4px);border-color:var(--green)}
+.feat-card::before{
+  content:'';position:absolute;top:0;left:0;right:0;height:3px;
+  background:linear-gradient(90deg,var(--green),var(--green-dim));
+  transform:scaleX(0);transform-origin:left;
+  transition:transform .3s;
+}
+.feat-card:hover::before{transform:scaleX(1)}
+.feat-icon{font-size:2rem;margin-bottom:16px}
+.feat-card h3{font-weight:600;font-size:1.05rem;margin-bottom:10px}
+.feat-card p{font-size:.88rem;color:var(--muted);line-height:1.65}
+
+.section-label{
+  font-family:'Space Mono',monospace;font-size:.7rem;
+  letter-spacing:.2em;text-transform:uppercase;
+  color:var(--green);margin-bottom:12px;
+}
+.section-title{
+  font-family:'Bebas Neue',sans-serif;font-size:clamp(2rem,5vw,3.2rem);
+  letter-spacing:.05em;
+}
+
+/* ══════════════════════════════════════════
+   PROVA SOCIAL
+══════════════════════════════════════════ */
+.social-header{
+  text-align:center;padding:60px 24px 40px;max-width:700px;margin:0 auto;
+}
+.chat-feed{
+  max-width:860px;margin:0 auto;padding:0 24px 80px;
+  display:flex;flex-direction:column;gap:18px;
+}
+.chat-msg{
+  display:flex;gap:14px;align-items:flex-start;
+  animation:fadeUp .5s ease both;
+}
+.chat-msg.right{flex-direction:row-reverse}
+.avatar{
+  width:44px;height:44px;border-radius:50%;
+  background:linear-gradient(135deg,var(--green),var(--green-dim));
+  display:flex;align-items:center;justify-content:center;
+  font-weight:700;font-size:.9rem;color:var(--black);
+  flex-shrink:0;
+}
+.chat-msg.right .avatar{background:linear-gradient(135deg,#3d5afe,#7c4dff)}
+.bubble{
+  background:var(--card);border:1px solid var(--border);
+  border-radius:18px;border-top-left-radius:4px;
+  padding:14px 18px;max-width:460px;
+}
+.chat-msg.right .bubble{border-radius:18px;border-top-right-radius:4px}
+.bubble-name{font-size:.72rem;font-weight:600;color:var(--green);margin-bottom:6px;letter-spacing:.05em}
+.chat-msg.right .bubble-name{color:#7c4dff;text-align:right}
+.bubble p{font-size:.88rem;line-height:1.6;color:var(--white)}
+.bubble-meta{font-size:.68rem;color:var(--muted);margin-top:6px}
+.stars{color:#ffc107;font-size:.8rem}
+
+/* ══════════════════════════════════════════
+   TERMOS
+══════════════════════════════════════════ */
+.terms-wrap{max-width:760px;margin:0 auto;padding:60px 24px 80px}
+.terms-wrap h2{
+  font-family:'Bebas Neue',sans-serif;font-size:2.8rem;letter-spacing:.05em;
+  margin-bottom:8px;
+}
+.terms-wrap .intro{color:var(--muted);margin-bottom:44px;font-size:.95rem;line-height:1.7}
+.term-block{
+  background:var(--card);border:1px solid var(--border);
+  border-radius:14px;padding:28px 32px;margin-bottom:18px;
+  border-left:3px solid var(--green);
+}
+.term-block h3{font-weight:600;font-size:1rem;margin-bottom:10px;color:var(--green)}
+.term-block p{font-size:.88rem;color:var(--muted);line-height:1.75}
+
+/* ══════════════════════════════════════════
+   CALCULAR (página 4)
+══════════════════════════════════════════ */
+.calc-wrap{max-width:700px;margin:0 auto;padding:60px 24px 100px}
+.calc-wrap .page-eyebrow{
+  font-family:'Space Mono',monospace;font-size:.7rem;letter-spacing:.2em;
+  text-transform:uppercase;color:var(--green);margin-bottom:12px;
+}
+.calc-wrap h2{
+  font-family:'Bebas Neue',sans-serif;font-size:clamp(2.2rem,6vw,3.6rem);
+  letter-spacing:.04em;line-height:1;margin-bottom:8px;
+}
+.calc-wrap .sub{color:var(--muted);font-size:.95rem;line-height:1.65;margin-bottom:44px}
+.api-url-bar{
+  background:var(--deep);border:1px solid var(--border);border-radius:10px;
+  padding:12px 18px;margin-bottom:36px;
+  display:flex;align-items:center;gap:10px;
+}
+.api-url-bar label{
+  font-size:.72rem;font-weight:600;letter-spacing:.1em;text-transform:uppercase;
+  color:var(--muted);white-space:nowrap;
+}
+.api-url-bar input{
+  flex:1;background:none;border:none;outline:none;
+  font-family:'Space Mono',monospace;font-size:.82rem;color:var(--green);
+  min-width:0;
+}
+
+.form-row{display:grid;grid-template-columns:1fr 1fr;gap:18px;margin-bottom:28px}
+@media(max-width:520px){.form-row{grid-template-columns:1fr}}
+.form-group label{
+  display:block;font-size:.75rem;font-weight:600;
+  letter-spacing:.1em;text-transform:uppercase;
+  color:var(--muted);margin-bottom:10px;
+}
+.form-group input{
+  width:100%;background:var(--card);
+  border:1px solid var(--border);border-radius:12px;
+  padding:16px 18px;font-family:'Outfit',sans-serif;font-size:1rem;
+  color:var(--white);outline:none;
+  transition:border-color .2s,box-shadow .2s;
+}
+.form-group input::placeholder{color:var(--muted)}
+.form-group input:focus{
+  border-color:var(--green);
+  box-shadow:0 0 0 3px var(--green-glow);
+}
+
+.btn-calc{
+  width:100%;padding:18px;border:none;border-radius:12px;
+  background:linear-gradient(135deg,var(--green),var(--green-dim));
+  color:var(--black);font-family:'Bebas Neue',sans-serif;
+  font-size:1.3rem;letter-spacing:.15em;
+  cursor:pointer;position:relative;overflow:hidden;
+  transition:transform .2s,box-shadow .2s;
+  box-shadow:0 4px 24px rgba(0,230,118,.25);
+}
+.btn-calc:hover{transform:translateY(-2px);box-shadow:0 8px 32px rgba(0,230,118,.4)}
+.btn-calc:active{transform:translateY(0)}
+.btn-calc:disabled{opacity:.5;cursor:not-allowed;transform:none}
+.btn-calc .spinner{
+  display:none;width:20px;height:20px;border:2px solid rgba(0,0,0,.2);
+  border-top-color:var(--black);border-radius:50%;
+  animation:spin .7s linear infinite;margin:0 auto;
+}
+.btn-calc.loading span{display:none}
+.btn-calc.loading .spinner{display:block}
+
+/* ── RESULTADO ── */
+#result-area{margin-top:44px}
+.result-card{
+  background:var(--card);border:1px solid var(--green);
+  border-radius:20px;overflow:hidden;
+  animation:fadeUp .5s ease both;
+  box-shadow:0 0 40px rgba(0,230,118,.1);
+}
+.result-header{
+  background:linear-gradient(135deg,rgba(0,230,118,.12),transparent);
+  padding:28px 32px;border-bottom:1px solid var(--border);
+  display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px;
+}
+.match-title{font-family:'Bebas Neue',sans-serif;font-size:1.7rem;letter-spacing:.06em}
+.match-title .vs{color:var(--muted);margin:0 10px;font-size:1.1rem}
+.confidence-badge{
+  padding:5px 14px;border-radius:100px;
+  font-size:.7rem;font-weight:700;letter-spacing:.12em;text-transform:uppercase;
+}
+.confidence-badge.HIGH{background:rgba(0,230,118,.2);color:var(--green);border:1px solid var(--green)}
+.confidence-badge.MEDIUM{background:rgba(255,193,7,.15);color:#ffc107;border:1px solid #ffc107}
+.confidence-badge.LOW{background:rgba(255,107,53,.15);color:var(--accent);border:1px solid var(--accent)}
+.result-meta{
+  padding:12px 32px;border-bottom:1px solid var(--border);
+  display:flex;gap:24px;flex-wrap:wrap;
+}
+.meta-item{font-size:.75rem;color:var(--muted)}
+.meta-item strong{color:var(--white)}
+
+.result-body{padding:28px 32px;display:flex;flex-direction:column;gap:32px}
+
+.res-section h4{
+  font-size:.7rem;font-weight:700;letter-spacing:.15em;text-transform:uppercase;
+  color:var(--muted);margin-bottom:16px;
+  display:flex;align-items:center;gap:8px;
+}
+.res-section h4::after{content:'';flex:1;height:1px;background:var(--border)}
+
+/* Winner */
+.winner-bars{display:flex;gap:10px;align-items:stretch}
+.w-bar-wrap{flex:1;text-align:center}
+.w-bar-wrap .label{font-size:.72rem;color:var(--muted);margin-bottom:8px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.w-bar-outer{height:90px;background:var(--deep);border-radius:8px;position:relative;overflow:hidden}
+.w-bar-inner{
+  position:absolute;bottom:0;left:0;right:0;
+  border-radius:8px 8px 0 0;
+  transition:height 1s cubic-bezier(.16,1,.3,1);
+}
+.w-bar-inner.home{background:linear-gradient(0deg,var(--green),rgba(0,230,118,.4))}
+.w-bar-inner.draw{background:linear-gradient(0deg,#ffc107,rgba(255,193,7,.3))}
+.w-bar-inner.away{background:linear-gradient(0deg,#3d5afe,rgba(61,90,254,.4))}
+.w-pct{font-family:'Bebas Neue',sans-serif;font-size:1.4rem;margin-top:8px}
+.w-pct.home{color:var(--green)}
+.w-pct.draw{color:#ffc107}
+.w-pct.away{color:#3d5afe}
+
+/* Probabilidades */
+.prob-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(155px,1fr));gap:12px}
+.prob-item{
+  background:var(--deep);border:1px solid var(--border);border-radius:12px;
+  padding:16px;text-align:center;
+  transition:border-color .2s;
+}
+.prob-item:hover{border-color:var(--green)}
+.prob-item .p-label{font-size:.7rem;color:var(--muted);margin-bottom:8px;letter-spacing:.08em;text-transform:uppercase}
+.prob-item .p-val{
+  font-family:'Bebas Neue',sans-serif;font-size:1.9rem;color:var(--green);
+  text-shadow:0 0 12px var(--green-glow);
+}
+.prob-item .p-val.accent{color:var(--accent)}
+.prob-item .p-val.blue{color:#3d5afe}
+
+/* XG */
+.xg-row{display:flex;gap:12px;align-items:center}
+.xg-team{flex:1;text-align:center}
+.xg-num{
+  font-family:'Bebas Neue',sans-serif;font-size:2.8rem;
+  color:var(--green);text-shadow:0 0 20px var(--green-glow);
+}
+.xg-team-name{font-size:.75rem;color:var(--muted);margin-top:4px}
+.xg-sep{font-family:'Bebas Neue',sans-serif;font-size:1.4rem;color:var(--border)}
+
+/* Form */
+.form-bubbles{display:flex;gap:6px;flex-wrap:wrap}
+.fb{
+  width:30px;height:30px;border-radius:8px;
+  display:flex;align-items:center;justify-content:center;
+  font-size:.75rem;font-weight:700;
+}
+.fb.W{background:rgba(0,230,118,.2);color:var(--green);border:1px solid var(--green)}
+.fb.D{background:rgba(255,193,7,.15);color:#ffc107;border:1px solid #ffc107}
+.fb.L{background:rgba(255,107,53,.15);color:var(--accent);border:1px solid var(--accent)}
+.fb.P{background:rgba(122,130,160,.15);color:var(--muted);border:1px solid var(--muted)}
+
+/* Form section two col */
+.form-teams{display:grid;grid-template-columns:1fr 1fr;gap:20px}
+.form-team-label{font-size:.78rem;font-weight:600;color:var(--white);margin-bottom:8px}
+
+/* Error */
+.error-card{
+  background:rgba(255,107,53,.08);border:1px solid var(--accent);
+  border-radius:14px;padding:24px;text-align:center;
+  animation:fadeUp .4s ease both;
+}
+.error-card p{color:var(--accent);font-size:.9rem;line-height:1.6}
+
+/* ══════════════════════════════════════════
+   NAV BOTTOM
+══════════════════════════════════════════ */
+#nav-bottom{
+  position:fixed;bottom:0;left:0;right:0;z-index:998;
+  padding:14px 24px 20px;
+  background:linear-gradient(transparent,rgba(7,8,16,.97));
+  display:flex;justify-content:center;
+}
+.btn-bottom{
+  padding:16px 48px;border:none;border-radius:14px;
+  background:linear-gradient(135deg,var(--green),var(--green-dim));
+  color:var(--black);font-family:'Bebas Neue',sans-serif;
+  font-size:1.1rem;letter-spacing:.15em;cursor:pointer;
+  box-shadow:0 4px 28px rgba(0,230,118,.35);
+  transition:transform .2s,box-shadow .2s;
+}
+.btn-bottom:hover{transform:translateY(-2px);box-shadow:0 8px 36px rgba(0,230,118,.5)}
+
+/* ── bottom spacing ── */
+.pb-nav{padding-bottom:80px}
+
+/* ══════════════════════════════════════════
+   ANIMATIONS
+══════════════════════════════════════════ */
+@keyframes fadeUp{
+  from{opacity:0;transform:translateY(22px)}
+  to{opacity:1;transform:translateY(0)}
+}
+@keyframes spin{to{transform:rotate(360deg)}}
+@keyframes pulse-green{
+  0%,100%{box-shadow:0 0 0 0 rgba(0,230,118,.4)}
+  50%{box-shadow:0 0 0 12px rgba(0,230,118,0)}
+}
+.pulse{animation:pulse-green 2s infinite}
+</style>
+</head>
+<body>
+
+<!-- ══ NAVBAR 1 ══ -->
+<nav id="nav1">
+  <div class="brand">soccer<span>-pro</span></div>
+</nav>
+
+<!-- ══ NAVBAR 2 ══ -->
+<nav id="nav2">
+  <button class="nav-link active" onclick="showPage('home',this)">Home</button>
+  <button class="nav-link" onclick="showPage('social',this)">Prova Social</button>
+  <button class="nav-link" onclick="showPage('terms',this)">Termos</button>
+</nav>
+
+<!-- ════════════════════════════════════════
+     PAGE 1 — HOME
+════════════════════════════════════════ -->
+<div class="page active pb-nav" id="page-home">
+  <section class="hero">
+    <div class="hero-bg"></div>
+    <div class="hero-grid"></div>
+    <div style="position:relative;z-index:1">
+      <div class="hero-badge">Análise com IA · Dados em Tempo Real</div>
+      <h1>Palpites<br><em>Inteligentes</em><br>para o Futebol</h1>
+      <p class="sub">Usa algoritmos de distribuição de Poisson e histórico real de jogos para calcular as probabilidades mais precisas do mercado. Joga com informação, não com sorte.</p>
+      <div class="hero-stats">
+        <div class="stat-item">
+          <div class="stat-num">94%</div>
+          <div class="stat-label">Precisão Média</div>
+        </div>
+        <div class="stat-item">
+          <div class="stat-num">12K+</div>
+          <div class="stat-label">Jogos Analisados</div>
+        </div>
+        <div class="stat-item">
+          <div class="stat-num">3s</div>
+          <div class="stat-label">Tempo de Resposta</div>
+        </div>
+        <div class="stat-item">
+          <div class="stat-num">50+</div>
+          <div class="stat-label">Ligas Cobertas</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section style="padding:0 24px;max-width:1100px;margin:0 auto 20px">
+    <div style="text-align:center;margin-bottom:48px">
+      <div class="section-label">Por que escolher</div>
+      <div class="section-title">Tecnologia ao teu serviço</div>
+    </div>
+    <div class="features">
+      <div class="feat-card">
+        <div class="feat-icon">⚡</div>
+        <h3>Resultados em Segundos</h3>
+        <p>O nosso motor de cálculo processa dados históricos de ambas as equipas e devolve probabilidades completas em menos de 3 segundos.</p>
+      </div>
+      <div class="feat-card">
+        <div class="feat-icon">📊</div>
+        <h3>Modelo de Poisson Avançado</h3>
+        <p>Utilizamos distribuição de Poisson combinada com força de ataque e defesa para projetar golos, cantos, cartões e vencedores.</p>
+      </div>
+      <div class="feat-card">
+        <div class="feat-icon">🔄</div>
+        <h3>Dados Actualizados Diariamente</h3>
+        <p>O sistema busca e recalcula automaticamente os palpites de todos os jogos do dia, mantendo sempre a informação mais recente.</p>
+      </div>
+      <div class="feat-card">
+        <div class="feat-icon">🎯</div>
+        <h3>H2H & Forma Recente</h3>
+        <p>Além do histórico individual, analisamos os últimos confrontos directos e a forma das últimas 5 a 8 partidas de cada equipa.</p>
+      </div>
+      <div class="feat-card">
+        <div class="feat-icon">🔒</div>
+        <h3>100% Gratuito e Privado</h3>
+        <p>Sem registo, sem subscrição, sem rastreio. Introduz as equipas, recebe os palpites. Assim tão simples.</p>
+      </div>
+      <div class="feat-card">
+        <div class="feat-icon">🌍</div>
+        <h3>Mais de 50 Ligas</h3>
+        <p>Da Premier League à Liga Portugal, passando por Serie A, La Liga, Bundesliga, Champions League e muito mais.</p>
+      </div>
+    </div>
+  </section>
+
+  <section style="background:var(--card);border-top:1px solid var(--border);border-bottom:1px solid var(--border);padding:60px 24px;text-align:center;margin-bottom:0">
+    <div class="section-label" style="text-align:center">Começa agora</div>
+    <div class="section-title" style="margin-bottom:16px">Pronto para o próximo jogo?</div>
+    <p style="color:var(--muted);max-width:480px;margin:0 auto 32px;font-size:.95rem;line-height:1.7">Introduz as duas equipas e deixa a nossa tecnologia fazer o resto. É grátis, rápido e surpreendentemente preciso.</p>
+    <button class="btn-bottom pulse" style="position:relative" onclick="showPage('calc',null);scrollToCalc()">
+      Calcular Palpite do Jogo
+    </button>
+  </section>
+</div>
+
+<!-- ════════════════════════════════════════
+     PAGE 2 — PROVA SOCIAL
+════════════════════════════════════════ -->
+<div class="page pb-nav" id="page-social">
+  <div class="social-header">
+    <div class="section-label" style="text-align:center">Comunidade</div>
+    <div class="section-title">O que dizem os nossos utilizadores</div>
+    <p style="color:var(--muted);margin-top:12px;font-size:.92rem;line-height:1.65">Mais de 12.000 apostadores confiam diariamente no Soccer Pro para tomar decisões mais informadas.</p>
+  </div>
+  <div class="chat-feed" id="chat-feed"></div>
+</div>
+
+<!-- ════════════════════════════════════════
+     PAGE 3 — TERMOS
+════════════════════════════════════════ -->
+<div class="page pb-nav" id="page-terms">
+  <div class="terms-wrap">
+    <div class="section-label">Legal</div>
+    <h2>Termos de Utilização</h2>
+    <p class="intro">Ao utilizar o Soccer Pro, concordas com os termos abaixo descritos. Por favor lê com atenção antes de utilizares as probabilidades geradas pela nossa plataforma.</p>
+
+    <div class="term-block">
+      <h3>1. Natureza Probabilística dos Palpites</h3>
+      <p>Todos os resultados fornecidos pelo Soccer Pro são baseados em modelos estatísticos e dados históricos. As probabilidades calculadas representam estimativas matemáticas e não garantias de resultado. O futebol é um desporto imprevisível e nenhum modelo, por mais avançado que seja, consegue prever com certeza absoluta o desfecho de um jogo. A plataforma não assegura, em nenhuma circunstância, a ocorrência dos eventos previstos.</p>
+    </div>
+
+    <div class="term-block">
+      <h3>2. Responsabilidade do Utilizador</h3>
+      <p>O utilizador é o único e exclusivo responsável pelas decisões tomadas com base nas informações fornecidas pela plataforma. O Soccer Pro não se responsabiliza por perdas financeiras, danos directos ou indirectos resultantes do uso ou mau uso dos palpites gerados. Ao usar este serviço, o utilizador declara ter mais de 18 anos e agir com plena consciência dos riscos associados às apostas desportivas.</p>
+    </div>
+
+    <div class="term-block">
+      <h3>3. Proibição de Uso Indevido</h3>
+      <p>É estritamente proibido utilizar os dados desta plataforma para fins comerciais, revenda de informações, ou criação de serviços derivados sem autorização prévia por escrito. O scraping automatizado, o acesso em massa à API ou qualquer uso que prejudique a estabilidade e disponibilidade do serviço para outros utilizadores é igualmente proibido e poderá resultar no bloqueio permanente do acesso.</p>
+    </div>
+
+    <div class="term-block">
+      <h3>4. Jogo Responsável</h3>
+      <p>O Soccer Pro incentiva fortemente o jogo responsável. Se tiveres dificuldade em controlar os teus hábitos de apostas, recomendamos que procures ajuda especializada junto de organizações como a SICAD (Serviço de Intervenção nos Comportamentos Aditivos) em Portugal, ou equivalentes no teu país. As apostas desportivas devem ser encaradas exclusivamente como entretenimento e nunca como uma fonte de rendimento.</p>
+    </div>
+
+    <div class="term-block">
+      <h3>5. Alterações e Disponibilidade do Serviço</h3>
+      <p>O Soccer Pro reserva o direito de modificar, suspender ou encerrar o serviço a qualquer momento, sem aviso prévio. Os termos de utilização podem ser actualizados periodicamente e o uso continuado da plataforma após tais alterações implica a aceitação dos novos termos. A disponibilidade dos dados depende de fontes externas e não podemos garantir a continuidade do serviço em caso de indisponibilidade das mesmas.</p>
+    </div>
+  </div>
+</div>
+
+<!-- ════════════════════════════════════════
+     PAGE 4 — CALCULAR
+════════════════════════════════════════ -->
+<div class="page pb-nav" id="page-calc">
+  <div class="calc-wrap">
+    <div class="page-eyebrow">Motor de Análise</div>
+    <h2>Calcular<br>Palpite do Jogo</h2>
+    <p class="sub">Introduz os nomes das duas equipas em inglês (ex: "Arsenal", "Barcelona") e o nosso motor de Poisson calcula todas as probabilidades do jogo.</p>
+
+    <div class="api-url-bar">
+      <label>API</label>
+      <input type="text" id="api-url-input" value="https://SEU-DOMINIO.hf.space" placeholder="https://SEU-DOMINIO.hf.space"/>
+    </div>
+
+    <div class="form-row">
+      <div class="form-group">
+        <label>⚽ Equipa A (Casa)</label>
+        <input type="text" id="team1" placeholder="Ex: Arsenal" autocomplete="off"/>
+      </div>
+      <div class="form-group">
+        <label>⚽ Equipa B (Fora)</label>
+        <input type="text" id="team2" placeholder="Ex: Barcelona" autocomplete="off"/>
+      </div>
+    </div>
+
+    <button class="btn-calc" id="calc-btn" onclick="calcularPalpite()">
+      <span>Calcular Palpite do Jogo</span>
+      <div class="spinner"></div>
+    </button>
+
+    <div id="result-area"></div>
+  </div>
+</div>
+
+<!-- ══ NAV BOTTOM ══ -->
+<div id="nav-bottom">
+  <button class="btn-bottom" onclick="showPage('calc',null);scrollToCalc()">
+    ⚽ Calcular Palpite do Jogo
+  </button>
+</div>
+
+<script>
+// ════════════════════════════════════════
+//  NAVEGAÇÃO
+// ════════════════════════════════════════
+function showPage(id, btn){
+  document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
+  document.getElementById('page-'+id).classList.add('active');
+  document.querySelectorAll('.nav-link').forEach(l=>l.classList.remove('active'));
+  if(btn) btn.classList.add('active');
+  window.scrollTo({top:0,behavior:'smooth'});
+}
+function scrollToCalc(){
+  setTimeout(()=>document.getElementById('calc-btn')?.scrollIntoView({behavior:'smooth',block:'center'}),300);
+}
+
+// ════════════════════════════════════════
+//  PROVA SOCIAL — 20 testemunhos
+// ════════════════════════════════════════
+const testimonials = [
+  {name:"Miguel A.",ini:"M",side:"left",stars:5,text:"Incrível! Usei o Soccer Pro para o Chelsea vs Manchester City e todos os valores de Over 2.5 baterem certinho. Recomendo a toda a gente.",time:"há 2h"},
+  {name:"Sofia R.",ini:"S",side:"right",stars:5,text:"Nunca pensei que uma ferramenta gratuita fosse tão precisa. Acertei 4 dos últimos 5 palpites. Estou rendida!",time:"há 3h"},
+  {name:"Carlos M.",ini:"C",side:"left",stars:5,text:"A parte dos golos esperados é fantástica. Permite perceber realmente o potencial ofensivo de cada equipa antes do jogo.",time:"há 5h"},
+  {name:"Ana L.",ini:"A",side:"right",stars:4,text:"Gosto muito do nível de confiança (HIGH/MEDIUM/LOW). Dá logo para perceber quando os dados são mais sólidos ou não.",time:"há 6h"},
+  {name:"Pedro F.",ini:"P",side:"left",stars:5,text:"Usei para a Champions League e os resultados foram surpreendentes. O BTTS veio correto em 3 jogos seguidos!",time:"há 8h"},
+  {name:"Beatriz S.",ini:"B",side:"right",stars:5,text:"Interface muito limpa e profissional. Em segundos tenho tudo o que preciso para decidir a minha aposta.",time:"ontem"},
+  {name:"Tiago N.",ini:"T",side:"left",stars:5,text:"O H2H ponderado faz toda a diferença. Já usei outras ferramentas mas esta é claramente a mais completa.",time:"ontem"},
+  {name:"Mariana C.",ini:"M",side:"right",stars:4,text:"Os dados actualizam automaticamente todos os dias. Adoro não ter que me preocupar com isso. Puro conforto.",time:"ontem"},
+  {name:"Rui P.",ini:"R",side:"left",stars:5,text:"Acertei no resultado exacto três semanas seguidas usando o Soccer Pro. Coincidência? Não acredito!",time:"há 2 dias"},
+  {name:"Inês M.",ini:"I",side:"right",stars:5,text:"Testei contra outra plataforma paga e o Soccer Pro saiu-se melhor. Não faz sentido pagar quando temos isto de graça.",time:"há 2 dias"},
+  {name:"Gonçalo T.",ini:"G",side:"left",stars:5,text:"O modelo de Poisson é um método que uso há anos em Excel. Ter isto automatizado e com interface bonita é um sonho.",time:"há 3 dias"},
+  {name:"Laura V.",ini:"L",side:"right",stars:5,text:"Partilhei com o meu grupo de apostas e toda a gente adorou. Passámos a usar antes de cada jogo importante.",time:"há 3 dias"},
+  {name:"Francisco B.",ini:"F",side:"left",stars:4,text:"Boa ferramenta. Os resultados chegam muito rápido e são bem detalhados. Fiquei impressionado com a qualidade.",time:"há 4 dias"},
+  {name:"Catarina R.",ini:"C",side:"right",stars:5,text:"A probabilidade de vitória foi certeira nos últimos 6 jogos que analisei. Obrigada Soccer Pro, és o melhor!",time:"há 4 dias"},
+  {name:"Hugo S.",ini:"H",side:"left",stars:5,text:"Uso o Soccer Pro todas as semanas antes das jornadas. Já me tornou muito mais consistente nas minhas análises.",time:"há 5 dias"},
+  {name:"Vera O.",ini:"V",side:"right",stars:4,text:"O facto de poder ver a forma recente de cada equipa em W/D/L é muito útil. Dá uma perspectiva imediata do momento.",time:"há 5 dias"},
+  {name:"André L.",ini:"A",side:"left",stars:5,text:"Analisei 10 jogos aleatórios e o Over 2.5 bateu em 8 deles. Estou a usar isto como base para todas as minhas decisões.",time:"há 6 dias"},
+  {name:"Joana F.",ini:"J",side:"right",stars:5,text:"A página carrega super rápido e os resultados são claros. Não há publicidade, não há distrações. 10/10.",time:"há 6 dias"},
+  {name:"Diogo C.",ini:"D",side:"left",stars:5,text:"Nunca tinha visto uma ferramenta de palpites tão transparente quanto ao modelo que usa. Isso transmite muita confiança.",time:"há 1 sem"},
+  {name:"Rita A.",ini:"R",side:"right",stars:5,text:"Comecei a usar há um mês e os meus resultados nas apostas melhoraram notavelmente. Ferramenta indispensável!",time:"há 1 sem"},
+];
+
+function renderChat(){
+  const feed = document.getElementById('chat-feed');
+  testimonials.forEach((t,i)=>{
+    const stars = '★'.repeat(t.stars)+'☆'.repeat(5-t.stars);
+    feed.innerHTML+=`
+    <div class="chat-msg ${t.side}" style="animation-delay:${i*0.06}s">
+      <div class="avatar">${t.ini}</div>
+      <div class="bubble">
+        <div class="bubble-name">${t.name}</div>
+        <p>${t.text}</p>
+        <div class="bubble-meta"><span class="stars">${stars}</span> · ${t.time}</div>
+      </div>
+    </div>`;
+  });
+}
+renderChat();
+
+// ════════════════════════════════════════
+//  CALCULAR PALPITE
+// ════════════════════════════════════════
+async function calcularPalpite(){
+  const t1 = document.getElementById('team1').value.trim();
+  const t2 = document.getElementById('team2').value.trim();
+  const apiBase = document.getElementById('api-url-input').value.trim().replace(/\/$/,'');
+  const btn = document.getElementById('calc-btn');
+  const area = document.getElementById('result-area');
+
+  if(!t1||!t2){
+    area.innerHTML=`<div class="error-card"><p>⚠️ Introduz os nomes das duas equipas antes de calcular.</p></div>`;
+    return;
+  }
+  if(!apiBase){
+    area.innerHTML=`<div class="error-card"><p>⚠️ Introduz o URL da tua API (ex: https://SEU-DOMINIO.hf.space)</p></div>`;
+    return;
+  }
+
+  btn.classList.add('loading');
+  btn.disabled=true;
+  area.innerHTML='';
+
+  try{
+    const url = `${apiBase}/predictions/match?home=${encodeURIComponent(t1)}&away=${encodeURIComponent(t2)}`;
+    const res = await fetch(url);
+    const data = await res.json();
+
+    if(!res.ok){
+      // Tenta /analysis como fallback
+      const url2 = `${apiBase}/analysis?team1=${encodeURIComponent(t1)}&team2=${encodeURIComponent(t2)}`;
+      const res2 = await fetch(url2);
+      if(!res2.ok) throw new Error(data.detail||'Jogo não encontrado. Verifica o nome das equipas.');
+      const d2 = await res2.json();
+      renderResult(d2, t1, t2, 'analysis');
+    } else {
+      renderResult(data.prediction||data, t1, t2, 'prediction');
+    }
+  } catch(e){
+    area.innerHTML=`<div class="error-card">
+      <p>❌ ${e.message||'Erro ao conectar à API. Verifica o URL e tenta novamente.'}</p>
+    </div>`;
+  } finally{
+    btn.classList.remove('loading');
+    btn.disabled=false;
+  }
+}
+
+function renderResult(d, t1, t2, mode){
+  const area = document.getElementById('result-area');
+
+  // Normaliza campos para ambos os modos
+  const home  = d.home_team    || d.meta?.team1?.name || t1;
+  const away  = d.away_team    || d.meta?.team2?.name || t2;
+  const league= d.league       || d.meta?.source      || '—';
+  const conf  = d.confidence   || (d.projections ? 'HIGH' : 'MEDIUM');
+  const date_ = d.match_date   || new Date().toISOString().split('T')[0];
+
+  const xgh   = +(d.expected_goals_home  || d.projections?.expected_goals_team1 || 0).toFixed(2);
+  const xga   = +(d.expected_goals_away  || d.projections?.expected_goals_team2 || 0).toFixed(2);
+
+  const gp    = d.goals_probabilities || d;
+  const wp    = d.winner_probabilities || d;
+  const hwp   = +(wp.home_win_pct  || wp.team1_win_pct || 0).toFixed(2);
+  const drp   = +(wp.draw_pct      || 0).toFixed(2);
+  const awp   = +(wp.away_win_pct  || wp.team2_win_pct || 0).toFixed(2);
+
+  const o15   = +(gp.over_1_5_pct  || 0).toFixed(2);
+  const o25   = +(gp.over_2_5_pct  || 0).toFixed(2);
+  const o35   = +(gp.over_3_5_pct  || 0).toFixed(2);
+  const u25   = +(gp.under_2_5_pct || 0).toFixed(2);
+  const btts  = +(gp.btts_pct      || 0).toFixed(2);
+  const h05   = +(gp.home_over_0_5_pct||gp.team1_over_0_5_pct||0).toFixed(2);
+  const h15   = +(gp.home_over_1_5_pct||gp.team1_over_1_5_pct||0).toFixed(2);
+  const a05   = +(gp.away_over_0_5_pct||gp.team2_over_0_5_pct||0).toFixed(2);
+  const a15   = +(gp.away_over_1_5_pct||gp.team2_over_1_5_pct||0).toFixed(2);
+
+  const hf    = d.home_form || d.team1_stats?.form?.join('')||'';
+  const af    = d.away_form || d.team2_stats?.form?.join('')||'';
+
+  const formBubbles = s => s.split('').map(c=>`<div class="fb ${c}">${c}</div>`).join('');
+
+  area.innerHTML=`
+  <div class="result-card">
+    <div class="result-header">
+      <div>
+        <div class="match-title">${home}<span class="vs">vs</span>${away}</div>
+        <div style="font-size:.78rem;color:var(--muted);margin-top:4px">🏆 ${league}</div>
+      </div>
+      <div class="confidence-badge ${conf}">${conf} CONFIANÇA</div>
+    </div>
+    <div class="result-meta">
+      <div class="meta-item">📅 <strong>${date_}</strong></div>
+      <div class="meta-item">⚽ xG Total: <strong>${(xgh+xga).toFixed(2)}</strong></div>
+      <div class="meta-item">🏠 Casa: <strong>${xgh}</strong></div>
+      <div class="meta-item">✈️ Fora: <strong>${xga}</strong></div>
+    </div>
+    <div class="result-body">
+
+      <!-- VENCEDOR -->
+      <div class="res-section">
+        <h4>Probabilidade de Vitória</h4>
+        <div class="winner-bars">
+          <div class="w-bar-wrap">
+            <div class="label">${home}</div>
+            <div class="w-bar-outer"><div class="w-bar-inner home" id="bar-h" style="height:0%"></div></div>
+            <div class="w-pct home">${hwp}%</div>
+          </div>
+          <div class="w-bar-wrap">
+            <div class="label">Empate</div>
+            <div class="w-bar-outer"><div class="w-bar-inner draw" id="bar-d" style="height:0%"></div></div>
+            <div class="w-pct draw">${drp}%</div>
+          </div>
+          <div class="w-bar-wrap">
+            <div class="label">${away}</div>
+            <div class="w-bar-outer"><div class="w-bar-inner away" id="bar-a" style="height:0%"></div></div>
+            <div class="w-pct away">${awp}%</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- XG -->
+      <div class="res-section">
+        <h4>Golos Esperados (xG)</h4>
+        <div class="xg-row">
+          <div class="xg-team"><div class="xg-num">${xgh}</div><div class="xg-team-name">${home}</div></div>
+          <div class="xg-sep">vs</div>
+          <div class="xg-team"><div class="xg-num" style="color:#3d5afe;text-shadow:0 0 20px rgba(61,90,254,.4)">${xga}</div><div class="xg-team-name">${away}</div></div>
+        </div>
+      </div>
+
+      <!-- PROBABILIDADES GOLOS -->
+      <div class="res-section">
+        <h4>Probabilidades de Golos</h4>
+        <div class="prob-grid">
+          <div class="prob-item"><div class="p-label">Over 1.5</div><div class="p-val">${o15}%</div></div>
+          <div class="prob-item"><div class="p-label">Over 2.5</div><div class="p-val">${o25}%</div></div>
+          <div class="prob-item"><div class="p-label">Over 3.5</div><div class="p-val accent">${o35}%</div></div>
+          <div class="prob-item"><div class="p-label">Under 2.5</div><div class="p-val blue">${u25}%</div></div>
+          <div class="prob-item"><div class="p-label">BTTS</div><div class="p-val">${btts}%</div></div>
+          <div class="prob-item"><div class="p-label">${home} Over 0.5</div><div class="p-val">${h05}%</div></div>
+          <div class="prob-item"><div class="p-label">${home} Over 1.5</div><div class="p-val">${h15}%</div></div>
+          <div class="prob-item"><div class="p-label">${away} Over 0.5</div><div class="p-val">${a05}%</div></div>
+          <div class="prob-item"><div class="p-label">${away} Over 1.5</div><div class="p-val">${a15}%</div></div>
+        </div>
+      </div>
+
+      ${hf||af?`
+      <!-- FORMA -->
+      <div class="res-section">
+        <h4>Forma Recente</h4>
+        <div class="form-teams">
+          ${hf?`<div><div class="form-team-label">${home}</div><div class="form-bubbles">${formBubbles(hf)}</div></div>`:''}
+          ${af?`<div><div class="form-team-label">${away}</div><div class="form-bubbles">${formBubbles(af)}</div></div>`:''}
+        </div>
+      </div>`:''}
+
+    </div>
+  </div>`;
+
+  // Anima barras
+  setTimeout(()=>{
+    document.getElementById('bar-h').style.height=hwp+'%';
+    document.getElementById('bar-d').style.height=drp+'%';
+    document.getElementById('bar-a').style.height=awp+'%';
+  },100);
+
+  area.scrollIntoView({behavior:'smooth',block:'start'});
+}
+
+// Enter key
+document.addEventListener('keydown',e=>{
+  if(e.key==='Enter'&&document.getElementById('page-calc').classList.contains('active')){
+    calcularPalpite();
+  }
+});
 </script>
-
 </body>
-  </html>
+</html>
