@@ -1,0 +1,709 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Admin - Soccer Pro</title>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Outfit:wght@300;400;500;600;700&family=Space+Mono:ital@0;1&display=swap" rel="stylesheet"/>
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+
+:root{
+  --black:#070810;
+  --deep:#0d0f1a;
+  --card:#131625;
+  --border:#1e2235;
+  --green:#00e676;
+  --green-dim:#00b85a;
+  --green-glow:rgba(0,230,118,0.18);
+  --white:#f0f4ff;
+  --muted:#7a82a0;
+  --accent:#ff6b35;
+}
+
+html{scroll-behavior:smooth}
+body{background:var(--black);color:var(--white);font-family:'Outfit',sans-serif;min-height:100vh;overflow-x:hidden}
+
+::-webkit-scrollbar{width:4px}
+::-webkit-scrollbar-track{background:var(--deep)}
+::-webkit-scrollbar-thumb{background:var(--green-dim);border-radius:2px}
+
+/* ════════════════════════════════════════
+   LOGIN SCREEN
+════════════════════════════════════════ */
+#login-screen{
+  position:fixed;inset:0;background:var(--black);
+  display:flex;align-items:center;justify-content:center;z-index:2000;
+}
+#login-screen.hidden{display:none}
+
+.login-container{
+  background:var(--card);border:1px solid var(--border);
+  border-radius:20px;padding:60px 40px;max-width:400px;
+  text-align:center;box-shadow:0 0 60px rgba(0,230,118,.15);
+}
+
+.login-container h1{
+  font-family:'Bebas Neue',sans-serif;font-size:2.2rem;
+  letter-spacing:.05em;margin-bottom:8px;color:var(--green);
+}
+
+.login-container p{
+  color:var(--muted);font-size:.9rem;margin-bottom:32px;line-height:1.6;
+}
+
+.login-group{margin-bottom:20px}
+.login-group label{
+  display:block;font-size:.75rem;font-weight:600;
+  letter-spacing:.1em;text-transform:uppercase;
+  color:var(--muted);margin-bottom:10px;
+}
+
+.login-group input{
+  width:100%;background:var(--deep);border:1px solid var(--border);
+  border-radius:12px;padding:14px 16px;font-family:'Outfit',sans-serif;
+  font-size:1rem;color:var(--white);outline:none;
+  transition:border-color .2s,box-shadow .2s;
+}
+
+.login-group input:focus{
+  border-color:var(--green);box-shadow:0 0 0 3px var(--green-glow);
+}
+
+.btn-login{
+  width:100%;padding:16px;border:none;border-radius:12px;
+  background:linear-gradient(135deg,var(--green),var(--green-dim));
+  color:var(--black);font-family:'Bebas Neue',sans-serif;
+  font-size:1.1rem;letter-spacing:.15em;cursor:pointer;
+  transition:transform .2s,box-shadow .2s;
+  box-shadow:0 4px 24px rgba(0,230,118,.25);
+}
+
+.btn-login:hover{transform:translateY(-2px);box-shadow:0 8px 32px rgba(0,230,118,.4)}
+
+.error-msg{
+  color:var(--accent);font-size:.85rem;margin-top:16px;
+  background:rgba(255,107,53,.1);padding:12px;border-radius:8px;
+  border:1px solid rgba(255,107,53,.3);display:none;
+}
+
+/* ════════════════════════════════════════
+   ADMIN HEADER
+════════════════════════════════════════ */
+#admin-header{
+  position:fixed;top:0;left:0;right:0;z-index:1000;
+  height:60px;background:var(--deep);border-bottom:1px solid var(--border);
+  display:flex;align-items:center;justify-content:space-between;padding:0 32px;
+}
+
+#admin-header h1{
+  font-family:'Bebas Neue',sans-serif;font-size:1.4rem;
+  letter-spacing:.05em;color:var(--green);
+}
+
+.btn-logout{
+  padding:10px 20px;background:rgba(255,107,53,.15);color:var(--accent);
+  border:1px solid var(--accent);border-radius:8px;cursor:pointer;
+  font-size:.85rem;font-weight:600;transition:all .2s;
+}
+
+.btn-logout:hover{background:rgba(255,107,53,.25)}
+
+/* ════════════════════════════════════════
+   ADMIN CONTAINER
+════════════════════════════════════════ */
+#admin-screen{
+  display:none;padding:80px 32px 60px;
+}
+
+#admin-screen.active{display:block}
+
+.admin-wrapper{
+  max-width:1200px;margin:0 auto;display:grid;
+  grid-template-columns:1fr 1fr;gap:40px;
+}
+
+@media(max-width:1024px){
+  .admin-wrapper{grid-template-columns:1fr;gap:30px}
+}
+
+/* ════════════════════════════════════════
+   FORM SECTION
+════════════════════════════════════════ */
+.form-section{
+  background:var(--card);border:1px solid var(--border);
+  border-radius:16px;padding:32px;
+}
+
+.form-section h2{
+  font-family:'Bebas Neue',sans-serif;font-size:1.6rem;
+  letter-spacing:.05em;margin-bottom:24px;color:var(--green);
+}
+
+.form-row{display:grid;grid-template-columns:1fr 1fr;gap:18px;margin-bottom:18px}
+
+@media(max-width:640px){
+  .form-row{grid-template-columns:1fr}
+  .form-section{padding:20px}
+}
+
+.form-group{display:flex;flex-direction:column}
+
+.form-group label{
+  font-size:.75rem;font-weight:600;letter-spacing:.1em;
+  text-transform:uppercase;color:var(--muted);margin-bottom:8px;
+}
+
+.form-group input,.form-group select{
+  background:var(--deep);border:1px solid var(--border);
+  border-radius:10px;padding:12px 14px;font-family:'Outfit',sans-serif;
+  font-size:.95rem;color:var(--white);outline:none;
+  transition:border-color .2s,box-shadow .2s;
+}
+
+.form-group input:focus,.form-group select:focus{
+  border-color:var(--green);box-shadow:0 0 0 3px var(--green-glow);
+}
+
+.form-group input::placeholder{color:var(--muted)}
+
+/* ════════════════════════════════════════
+   PREVIEW SECTION
+════════════════════════════════════════ */
+.preview-section{
+  background:var(--card);border:1px solid var(--border);
+  border-radius:16px;padding:32px;min-height:500px;
+  display:flex;flex-direction:column;position:sticky;top:80px;
+}
+
+.preview-section h2{
+  font-family:'Bebas Neue',sans-serif;font-size:1.6rem;
+  letter-spacing:.05em;margin-bottom:24px;color:var(--green);
+}
+
+.result-card{
+  background:var(--deep);border:1px solid var(--green);
+  border-radius:14px;overflow:hidden;flex:1;
+  box-shadow:0 0 40px rgba(0,230,118,.1);
+  display:flex;flex-direction:column;
+}
+
+.result-header{
+  background:linear-gradient(135deg,rgba(0,230,118,.12),transparent);
+  padding:20px;border-bottom:1px solid var(--border);
+}
+
+.match-title{
+  font-family:'Bebas Neue',sans-serif;font-size:1.5rem;
+  letter-spacing:.06em;margin-bottom:4px;
+}
+
+.match-title .vs{color:var(--muted);margin:0 8px;font-size:1rem}
+
+.match-meta{
+  font-size:.75rem;color:var(--muted);line-height:1.5;
+}
+
+.confidence-badge{
+  display:inline-block;padding:5px 14px;border-radius:100px;
+  font-size:.7rem;font-weight:700;letter-spacing:.12em;
+  text-transform:uppercase;margin-top:8px;
+}
+
+.confidence-badge.HIGH{background:rgba(0,230,118,.2);color:var(--green);border:1px solid var(--green)}
+.confidence-badge.MEDIUM{background:rgba(255,193,7,.15);color:#ffc107;border:1px solid #ffc107}
+.confidence-badge.LOW{background:rgba(255,107,53,.15);color:var(--accent);border:1px solid var(--accent)}
+
+.result-body{
+  padding:20px;overflow-y:auto;flex:1;
+}
+
+.res-section{margin-bottom:24px}
+
+.res-section h4{
+  font-size:.7rem;font-weight:700;letter-spacing:.15em;
+  text-transform:uppercase;color:var(--muted);margin-bottom:12px;
+  display:flex;align-items:center;gap:8px;
+}
+
+.res-section h4::after{content:'';flex:1;height:1px;background:var(--border)}
+
+/* Winner bars */
+.winner-bars{display:flex;gap:8px;align-items:stretch;margin-bottom:20px}
+
+.w-bar-wrap{flex:1;text-align:center}
+
+.w-bar-wrap .label{font-size:.7rem;color:var(--muted);margin-bottom:6px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+
+.w-bar-outer{height:70px;background:var(--black);border-radius:6px;position:relative;overflow:hidden}
+
+.w-bar-inner{
+  position:absolute;bottom:0;left:0;right:0;border-radius:6px 6px 0 0;
+  transition:height .5s cubic-bezier(.16,1,.3,1);
+}
+
+.w-bar-inner.home{background:linear-gradient(0deg,var(--green),rgba(0,230,118,.4))}
+.w-bar-inner.draw{background:linear-gradient(0deg,#ffc107,rgba(255,193,7,.3))}
+.w-bar-inner.away{background:linear-gradient(0deg,#3d5afe,rgba(61,90,254,.4))}
+
+.w-pct{font-family:'Bebas Neue',sans-serif;font-size:1.2rem;margin-top:6px}
+
+.w-pct.home{color:var(--green)}
+.w-pct.draw{color:#ffc107}
+.w-pct.away{color:#3d5afe}
+
+/* Probability grid */
+.prob-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:20px}
+
+.prob-item{
+  background:var(--black);border:1px solid var(--border);
+  border-radius:8px;padding:12px;text-align:center;
+}
+
+.prob-item .p-label{
+  font-size:.65rem;color:var(--muted);margin-bottom:6px;
+  letter-spacing:.08em;text-transform:uppercase;
+}
+
+.prob-item .p-val{
+  font-family:'Bebas Neue',sans-serif;font-size:1.4rem;
+  color:var(--green);text-shadow:0 0 12px var(--green-glow);
+}
+
+.prob-item .p-val.accent{color:var(--accent)}
+.prob-item .p-val.blue{color:#3d5afe}
+
+/* XG */
+.xg-row{display:flex;gap:12px;align-items:center;margin-bottom:20px}
+
+.xg-team{flex:1;text-align:center}
+
+.xg-num{
+  font-family:'Bebas Neue',sans-serif;font-size:2.2rem;
+  color:var(--green);text-shadow:0 0 20px var(--green-glow);
+}
+
+.xg-team-name{font-size:.7rem;color:var(--muted);margin-top:4px}
+
+.xg-sep{font-family:'Bebas Neue',sans-serif;font-size:1.2rem;color:var(--border)}
+
+/* Form bubbles */
+.form-bubbles{display:flex;gap:4px;flex-wrap:wrap}
+
+.fb{
+  width:26px;height:26px;border-radius:6px;
+  display:flex;align-items:center;justify-content:center;
+  font-size:.7rem;font-weight:700;
+}
+
+.fb.W{background:rgba(0,230,118,.2);color:var(--green);border:1px solid var(--green)}
+.fb.D{background:rgba(255,193,7,.15);color:#ffc107;border:1px solid #ffc107}
+.fb.L{background:rgba(255,107,53,.15);color:var(--accent);border:1px solid var(--accent)}
+
+/* ════════════════════════════════════════
+   BUTTONS
+════════════════════════════════════════ */
+.btn-group{display:flex;gap:12px;margin-top:24px}
+
+.btn-calc, .btn-publish{
+  flex:1;padding:14px;border:none;border-radius:10px;
+  font-family:'Bebas Neue',sans-serif;font-size:1rem;
+  letter-spacing:.1em;cursor:pointer;transition:all .2s;
+}
+
+.btn-calc{
+  background:linear-gradient(135deg,#3d5afe,#7c4dff);
+  color:var(--white);box-shadow:0 4px 16px rgba(61,90,254,.3);
+}
+
+.btn-calc:hover{transform:translateY(-2px);box-shadow:0 6px 24px rgba(61,90,254,.4)}
+
+.btn-publish{
+  background:linear-gradient(135deg,var(--green),var(--green-dim));
+  color:var(--black);box-shadow:0 4px 16px rgba(0,230,118,.3);
+}
+
+.btn-publish:hover{transform:translateY(-2px);box-shadow:0 6px 24px rgba(0,230,118,.4)}
+
+.btn-publish:disabled{opacity:.5;cursor:not-allowed;transform:none}
+
+/* ════════════════════════════════════════
+   ANIMATIONS
+════════════════════════════════════════ */
+@keyframes fadeIn{
+  from{opacity:0;transform:translateY(10px)}
+  to{opacity:1;transform:translateY(0)}
+}
+
+.result-card{animation:fadeIn .4s ease}
+</style>
+</head>
+<body>
+
+<!-- LOGIN SCREEN -->
+<div id="login-screen">
+  <div class="login-container">
+    <h1>ADMIN</h1>
+    <p>Painel de Administrador<br>Soccer Pro Predictions</p>
+    <div class="login-group">
+      <label>🔑 Chave de Admin</label>
+      <input type="password" id="admin-key" placeholder="Introduz a chave" autocomplete="off"/>
+    </div>
+    <button class="btn-login" onclick="loginAdmin()">Entrar</button>
+    <div class="error-msg" id="error-msg">Chave incorreta. Tenta novamente.</div>
+  </div>
+</div>
+
+<!-- ADMIN SCREEN -->
+<div id="admin-screen">
+  
+  <div id="admin-header">
+    <h1>⚽ ADMIN — Soccer Pro</h1>
+    <button class="btn-logout" onclick="logoutAdmin()">Sair</button>
+  </div>
+
+  <div class="admin-wrapper">
+
+    <!-- FORM -->
+    <div class="form-section">
+      <h2>Calcular Palpite</h2>
+
+      <div class="form-row">
+        <div class="form-group">
+          <label>🏠 Equipa Casa</label>
+          <input type="text" id="team1" placeholder="Ex: Arsenal" onchange="calcularAuto()" onkeyup="calcularAuto()"/>
+        </div>
+        <div class="form-group">
+          <label>✈️ Equipa Fora</label>
+          <input type="text" id="team2" placeholder="Ex: Barcelona" onchange="calcularAuto()" onkeyup="calcularAuto()"/>
+        </div>
+      </div>
+
+      <div class="form-row">
+        <div class="form-group">
+          <label>🏆 Liga</label>
+          <input type="text" id="league" placeholder="Ex: Premier League" onchange="calcularAuto()" onkeyup="calcularAuto()"/>
+        </div>
+        <div class="form-group">
+          <label>📅 Data do Jogo</label>
+          <input type="date" id="match-date" value="" onchange="calcularAuto()"/>
+        </div>
+      </div>
+
+      <div class="form-row">
+        <div class="form-group">
+          <label>⚽ xG Casa (Golos Esperados)</label>
+          <input type="number" id="xg-home" placeholder="0.00" step="0.1" min="0" onchange="calcularAuto()" onkeyup="calcularAuto()"/>
+        </div>
+        <div class="form-group">
+          <label>⚽ xG Fora (Golos Esperados)</label>
+          <input type="number" id="xg-away" placeholder="0.00" step="0.1" min="0" onchange="calcularAuto()" onkeyup="calcularAuto()"/>
+        </div>
+      </div>
+
+      <div class="form-row">
+        <div class="form-group">
+          <label>🎯 % Vitória Casa</label>
+          <input type="number" id="win-home" placeholder="0" step="0.1" min="0" max="100" onchange="calcularAuto()" onkeyup="calcularAuto()"/>
+        </div>
+        <div class="form-group">
+          <label>🤝 % Empate</label>
+          <input type="number" id="win-draw" placeholder="0" step="0.1" min="0" max="100" onchange="calcularAuto()" onkeyup="calcularAuto()"/>
+        </div>
+      </div>
+
+      <div class="form-row">
+        <div class="form-group">
+          <label>🎯 % Vitória Fora</label>
+          <input type="number" id="win-away" placeholder="0" step="0.1" min="0" max="100" onchange="calcularAuto()" onkeyup="calcularAuto()"/>
+        </div>
+        <div class="form-group">
+          <label>🔒 Confiança</label>
+          <select id="confidence" onchange="calcularAuto()">
+            <option value="HIGH">HIGH - Muito Confiante</option>
+            <option value="MEDIUM" selected>MEDIUM - Moderado</option>
+            <option value="LOW">LOW - Baixa Confiança</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="form-row">
+        <div class="form-group">
+          <label>📈 Over 1.5</label>
+          <input type="number" id="o15" placeholder="0" step="0.1" min="0" max="100" onchange="calcularAuto()" onkeyup="calcularAuto()"/>
+        </div>
+        <div class="form-group">
+          <label>📈 Over 2.5</label>
+          <input type="number" id="o25" placeholder="0" step="0.1" min="0" max="100" onchange="calcularAuto()" onkeyup="calcularAuto()"/>
+        </div>
+      </div>
+
+      <div class="form-row">
+        <div class="form-group">
+          <label>📉 Over 3.5</label>
+          <input type="number" id="o35" placeholder="0" step="0.1" min="0" max="100" onchange="calcularAuto()" onkeyup="calcularAuto()"/>
+        </div>
+        <div class="form-group">
+          <label>⚽⚽ BTTS (Ambas Marcam)</label>
+          <input type="number" id="btts" placeholder="0" step="0.1" min="0" max="100" onchange="calcularAuto()" onkeyup="calcularAuto()"/>
+        </div>
+      </div>
+
+      <div class="form-row">
+        <div class="form-group">
+          <label>🏠 Casa Over 0.5</label>
+          <input type="number" id="h05" placeholder="0" step="0.1" min="0" max="100" onchange="calcularAuto()" onkeyup="calcularAuto()"/>
+        </div>
+        <div class="form-group">
+          <label>🏠 Casa Over 1.5</label>
+          <input type="number" id="h15" placeholder="0" step="0.1" min="0" max="100" onchange="calcularAuto()" onkeyup="calcularAuto()"/>
+        </div>
+      </div>
+
+      <div class="form-row">
+        <div class="form-group">
+          <label>✈️ Fora Over 0.5</label>
+          <input type="number" id="a05" placeholder="0" step="0.1" min="0" max="100" onchange="calcularAuto()" onkeyup="calcularAuto()"/>
+        </div>
+        <div class="form-group">
+          <label>✈️ Fora Over 1.5</label>
+          <input type="number" id="a15" placeholder="0" step="0.1" min="0" max="100" onchange="calcularAuto()" onkeyup="calcularAuto()"/>
+        </div>
+      </div>
+
+      <div class="form-row">
+        <div class="form-group">
+          <label>🏠 Forma Casa (W/D/L)</label>
+          <input type="text" id="form-home" placeholder="Ex: WDWWL" maxlength="8" onchange="calcularAuto()" onkeyup="calcularAuto()"/>
+        </div>
+        <div class="form-group">
+          <label>✈️ Forma Fora (W/D/L)</label>
+          <input type="text" id="form-away" placeholder="Ex: WDWWL" maxlength="8" onchange="calcularAuto()" onkeyup="calcularAuto()"/>
+        </div>
+      </div>
+
+      <div class="btn-group">
+        <button class="btn-calc" onclick="calcularAuto()">🔄 Recalcular</button>
+        <button class="btn-publish" id="btn-publish" onclick="publicarPalpite()">📤 Publicar Palpite</button>
+      </div>
+    </div>
+
+    <!-- PREVIEW -->
+    <div class="preview-section">
+      <h2>Pré-visualização</h2>
+      <div id="preview-content" style="text-align:center;color:var(--muted);padding:40px 20px;">
+        Preenche os dados ao lado para ver a pré-visualização aqui →
+      </div>
+    </div>
+
+  </div>
+
+</div>
+
+<script>
+// ════════════════════════════════════════
+//  AUTENTICAÇÃO
+// ════════════════════════════════════════
+const ADMIN_KEY = '123qwe';
+
+function loginAdmin(){
+  const key = document.getElementById('admin-key').value;
+  if(key === ADMIN_KEY){
+    localStorage.setItem('admin-logged', 'true');
+    document.getElementById('login-screen').classList.add('hidden');
+    document.getElementById('admin-screen').classList.add('active');
+  } else {
+    document.getElementById('error-msg').style.display='block';
+    setTimeout(()=>document.getElementById('error-msg').style.display='none', 3000);
+  }
+}
+
+function logoutAdmin(){
+  localStorage.removeItem('admin-logged');
+  document.getElementById('admin-screen').classList.remove('active');
+  document.getElementById('login-screen').classList.remove('hidden');
+  document.getElementById('admin-key').value='';
+}
+
+// Check login on load
+window.addEventListener('load',()=>{
+  if(localStorage.getItem('admin-logged')==='true'){
+    document.getElementById('login-screen').classList.add('hidden');
+    document.getElementById('admin-screen').classList.add('active');
+  }
+  document.getElementById('match-date').valueAsDate = new Date();
+});
+
+// Enter key login
+document.addEventListener('keydown',e=>{
+  if(e.key==='Enter'&&!document.getElementById('login-screen').classList.contains('hidden')){
+    loginAdmin();
+  }
+});
+
+// ════════════════════════════════════════
+//  CÁLCULO E PREVIEW
+// ════════════════════════════════════════
+function calcularAuto(){
+  const data = {
+    home_team: document.getElementById('team1').value || 'Equipa Casa',
+    away_team: document.getElementById('team2').value || 'Equipa Fora',
+    league: document.getElementById('league').value || 'Liga',
+    match_date: document.getElementById('match-date').value || new Date().toISOString().split('T')[0],
+    expected_goals_home: parseFloat(document.getElementById('xg-home').value) || 0,
+    expected_goals_away: parseFloat(document.getElementById('xg-away').value) || 0,
+    home_win_pct: parseFloat(document.getElementById('win-home').value) || 0,
+    draw_pct: parseFloat(document.getElementById('win-draw').value) || 0,
+    away_win_pct: parseFloat(document.getElementById('win-away').value) || 0,
+    confidence: document.getElementById('confidence').value,
+    over_1_5_pct: parseFloat(document.getElementById('o15').value) || 0,
+    over_2_5_pct: parseFloat(document.getElementById('o25').value) || 0,
+    over_3_5_pct: parseFloat(document.getElementById('o35').value) || 0,
+    btts_pct: parseFloat(document.getElementById('btts').value) || 0,
+    home_over_0_5_pct: parseFloat(document.getElementById('h05').value) || 0,
+    home_over_1_5_pct: parseFloat(document.getElementById('h15').value) || 0,
+    away_over_0_5_pct: parseFloat(document.getElementById('a05').value) || 0,
+    away_over_1_5_pct: parseFloat(document.getElementById('a15').value) || 0,
+    home_form: document.getElementById('form-home').value.toUpperCase(),
+    away_form: document.getElementById('form-away').value.toUpperCase(),
+  };
+
+  renderPreview(data);
+  return data;
+}
+
+function renderPreview(d){
+  const preview = document.getElementById('preview-content');
+
+  const hwp = d.home_win_pct;
+  const drp = d.draw_pct;
+  const awp = d.away_win_pct;
+
+  const formBubbles = s => s.split('').map(c=>{
+    if(c==='W'||c==='D'||c==='L') return `<div class="fb ${c}">${c}</div>`;
+    return '';
+  }).join('');
+
+  preview.innerHTML=`
+  <div class="result-card">
+    <div class="result-header">
+      <div class="match-title">${d.home_team}<span class="vs">vs</span>${d.away_team}</div>
+      <div class="match-meta">🏆 ${d.league}<br>📅 ${d.match_date}</div>
+      <div class="confidence-badge ${d.confidence}">${d.confidence}</div>
+    </div>
+    <div class="result-body">
+      
+      <!-- VITÓRIA -->
+      <div class="res-section">
+        <h4>Probabilidade de Vitória</h4>
+        <div class="winner-bars">
+          <div class="w-bar-wrap">
+            <div class="label">${d.home_team}</div>
+            <div class="w-bar-outer"><div class="w-bar-inner home" id="bar-h" style="height:0%"></div></div>
+            <div class="w-pct home">${hwp.toFixed(1)}%</div>
+          </div>
+          <div class="w-bar-wrap">
+            <div class="label">Empate</div>
+            <div class="w-bar-outer"><div class="w-bar-inner draw" id="bar-d" style="height:0%"></div></div>
+            <div class="w-pct draw">${drp.toFixed(1)}%</div>
+          </div>
+          <div class="w-bar-wrap">
+            <div class="label">${d.away_team}</div>
+            <div class="w-bar-outer"><div class="w-bar-inner away" id="bar-a" style="height:0%"></div></div>
+            <div class="w-pct away">${awp.toFixed(1)}%</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- XG -->
+      <div class="res-section">
+        <h4>Golos Esperados (xG)</h4>
+        <div class="xg-row">
+          <div class="xg-team"><div class="xg-num">${d.expected_goals_home.toFixed(2)}</div><div class="xg-team-name">${d.home_team}</div></div>
+          <div class="xg-sep">vs</div>
+          <div class="xg-team"><div class="xg-num" style="color:#3d5afe;text-shadow:0 0 20px rgba(61,90,254,.4)">${d.expected_goals_away.toFixed(2)}</div><div class="xg-team-name">${d.away_team}</div></div>
+        </div>
+      </div>
+
+      <!-- PROBABILIDADES -->
+      <div class="res-section">
+        <h4>Probabilidades de Golos</h4>
+        <div class="prob-grid">
+          <div class="prob-item"><div class="p-label">Over 1.5</div><div class="p-val">${d.over_1_5_pct.toFixed(1)}%</div></div>
+          <div class="prob-item"><div class="p-label">Over 2.5</div><div class="p-val">${d.over_2_5_pct.toFixed(1)}%</div></div>
+          <div class="prob-item"><div class="p-label">Over 3.5</div><div class="p-val accent">${d.over_3_5_pct.toFixed(1)}%</div></div>
+          <div class="prob-item"><div class="p-label">BTTS</div><div class="p-val">${d.btts_pct.toFixed(1)}%</div></div>
+          <div class="prob-item"><div class="p-label">${d.home_team} O 0.5</div><div class="p-val">${d.home_over_0_5_pct.toFixed(1)}%</div></div>
+          <div class="prob-item"><div class="p-label">${d.home_team} O 1.5</div><div class="p-val">${d.home_over_1_5_pct.toFixed(1)}%</div></div>
+          <div class="prob-item"><div class="p-label">${d.away_team} O 0.5</div><div class="p-val">${d.away_over_0_5_pct.toFixed(1)}%</div></div>
+          <div class="prob-item"><div class="p-label">${d.away_team} O 1.5</div><div class="p-val">${d.away_over_1_5_pct.toFixed(1)}%</div></div>
+        </div>
+      </div>
+
+      ${d.home_form||d.away_form?`
+      <!-- FORMA -->
+      <div class="res-section">
+        <h4>Forma Recente</h4>
+        ${d.home_form?`<div style="margin-bottom:12px"><div style="font-size:.75rem;color:var(--white);margin-bottom:8px">🏠 ${d.home_team}</div><div class="form-bubbles">${formBubbles(d.home_form)}</div></div>`:''}
+        ${d.away_form?`<div><div style="font-size:.75rem;color:var(--white);margin-bottom:8px">✈️ ${d.away_team}</div><div class="form-bubbles">${formBubbles(d.away_form)}</div></div>`:''}
+      </div>
+      `:''}
+
+    </div>
+  </div>`;
+
+  // Anima barras
+  setTimeout(()=>{
+    document.getElementById('bar-h').style.height = hwp+'%';
+    document.getElementById('bar-d').style.height = drp+'%';
+    document.getElementById('bar-a').style.height = awp+'%';
+  }, 100);
+}
+
+// ════════════════════════════════════════
+//  PUBLICAR PALPITE
+// ════════════════════════════════════════
+function publicarPalpite(){
+  const t1 = document.getElementById('team1').value.trim();
+  const t2 = document.getElementById('team2').value.trim();
+
+  if(!t1||!t2){
+    alert('⚠️ Preenche os nomes das duas equipas!');
+    return;
+  }
+
+  const data = calcularAuto();
+  const predictions = JSON.parse(localStorage.getItem('predictions')) || [];
+  
+  data.id = Date.now();
+  predictions.unshift(data);
+
+  localStorage.setItem('predictions', JSON.stringify(predictions));
+  
+  alert('✅ Palpite publicado com sucesso!');
+
+  // Limpa form
+  document.getElementById('team1').value = '';
+  document.getElementById('team2').value = '';
+  document.getElementById('league').value = '';
+  document.getElementById('xg-home').value = '';
+  document.getElementById('xg-away').value = '';
+  document.getElementById('win-home').value = '';
+  document.getElementById('win-draw').value = '';
+  document.getElementById('win-away').value = '';
+  document.getElementById('o15').value = '';
+  document.getElementById('o25').value = '';
+  document.getElementById('o35').value = '';
+  document.getElementById('btts').value = '';
+  document.getElementById('h05').value = '';
+  document.getElementById('h15').value = '';
+  document.getElementById('a05').value = '';
+  document.getElementById('a15').value = '';
+  document.getElementById('form-home').value = '';
+  document.getElementById('form-away').value = '';
+
+  calcularAuto();
+}
+</script>
+</body>
+</html>
