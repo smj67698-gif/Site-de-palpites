@@ -1,1 +1,449 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>BookLumiere</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;0,900;1,400&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{--ink:#0d0d0d;--ink2:#141210;--cream:#f5f0e8;--gold:#c9a84c;--muted:#7a7265;}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+html{scroll-behavior:smooth;}
+body{font-family:'DM Sans',sans-serif;background:var(--ink);color:var(--cream);min-height:100vh;overflow-x:hidden;}
+body::before{content:'';position:fixed;inset:0;background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.04'/%3E%3C/svg%3E");pointer-events:none;z-index:0;opacity:.5;}
+.ambient{position:fixed;border-radius:50%;filter:blur(120px);pointer-events:none;z-index:0;}
+.a1{width:600px;height:600px;background:radial-gradient(circle,rgba(201,168,76,.1) 0%,transparent 70%);top:-150px;right:-100px;animation:drift 8s ease-in-out infinite alternate;}
+.a2{width:500px;height:500px;background:radial-gradient(circle,rgba(201,168,76,.06) 0%,transparent 70%);bottom:0;left:-150px;animation:drift 10s ease-in-out infinite alternate-reverse;}
+@keyframes drift{from{transform:translate(0,0)}to{transform:translate(30px,20px)}}
 
+/* NAV */
+nav{position:fixed;top:0;left:0;right:0;display:flex;align-items:center;justify-content:space-between;padding:20px 48px;background:rgba(13,13,13,.75);backdrop-filter:blur(20px);border-bottom:1px solid rgba(201,168,76,.1);z-index:100;}
+.nav-logo{font-family:'Playfair Display',serif;font-size:1.4rem;font-weight:700;color:var(--gold);}
+.nav-logo span{color:var(--cream);font-style:italic;}
+.admin-btn{font-size:.75rem;font-weight:500;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);background:none;border:1px solid rgba(122,114,101,.3);padding:8px 18px;border-radius:999px;cursor:pointer;transition:all .3s;}
+.admin-btn:hover{color:var(--gold);border-color:var(--gold);}
+
+/* PAGE */
+.page{position:relative;z-index:1;padding-top:88px;}
+#empty-state{display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:calc(100vh - 88px);gap:20px;text-align:center;padding:40px;}
+.empty-icon{font-size:3.5rem;opacity:.25;}
+.empty-title{font-family:'Playfair Display',serif;font-size:1.8rem;font-weight:700;color:var(--cream);opacity:.4;}
+.empty-sub{font-size:.85rem;color:var(--muted);}
+.cat-header{max-width:1200px;margin:0 auto;padding:52px 48px 0;display:flex;align-items:flex-end;justify-content:space-between;gap:16px;}
+.cat-heading{font-family:'Playfair Display',serif;font-size:clamp(1.6rem,2.5vw,2.2rem);font-weight:900;color:var(--cream);}
+.cat-heading em{font-style:italic;color:var(--gold);}
+.cat-count{font-size:.75rem;color:var(--muted);letter-spacing:.1em;text-transform:uppercase;white-space:nowrap;padding-bottom:4px;}
+
+/* CATALOG */
+#catalog{max-width:1200px;margin:0 auto;padding:36px 48px 80px;display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:32px;}
+.ebook-card{background:var(--ink2);border:1px solid rgba(201,168,76,.1);border-radius:20px;overflow:hidden;display:flex;flex-direction:column;transition:transform .3s,box-shadow .3s,border-color .3s;animation:cardIn .5s cubic-bezier(.34,1.56,.64,1) both;}
+@keyframes cardIn{from{opacity:0;transform:translateY(24px)}to{opacity:1;transform:translateY(0)}}
+.ebook-card:hover{transform:translateY(-6px);box-shadow:0 24px 60px rgba(0,0,0,.45),0 0 0 1px rgba(201,168,76,.22);border-color:rgba(201,168,76,.25);}
+.card-cover{position:relative;height:260px;background:linear-gradient(135deg,#1e1a12,#2a2318);overflow:hidden;flex-shrink:0;}
+.card-cover img{width:100%;height:100%;object-fit:cover;display:block;transition:transform .5s;}
+.ebook-card:hover .card-cover img{transform:scale(1.05);}
+.card-cover-ph{width:100%;height:100%;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:10px;}
+.card-cover-ph svg{opacity:.2;}
+.card-cover-ph span{font-size:.7rem;color:var(--muted);letter-spacing:.1em;text-transform:uppercase;}
+.card-body{padding:26px 26px 20px;flex:1;display:flex;flex-direction:column;gap:12px;}
+.card-eyebrow{display:inline-flex;align-items:center;gap:8px;font-size:.65rem;font-weight:600;letter-spacing:.2em;text-transform:uppercase;color:var(--gold);}
+.card-eyebrow::before{content:'';display:block;width:18px;height:1px;background:var(--gold);}
+.card-title{font-family:'Playfair Display',serif;font-size:1.25rem;font-weight:800;line-height:1.2;color:var(--cream);}
+.card-desc{font-size:.85rem;line-height:1.7;color:#9e9587;font-weight:300;flex:1;display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden;}
+.card-footer{border-top:1px solid rgba(201,168,76,.08);padding:18px 26px;display:flex;align-items:center;justify-content:space-between;gap:12px;flex-shrink:0;}
+.card-plabel{font-size:.62rem;color:var(--muted);letter-spacing:.1em;text-transform:uppercase;margin-bottom:2px;}
+.card-price{font-family:'Playfair Display',serif;font-size:1.65rem;font-weight:700;color:var(--gold);line-height:1;}
+.card-buy{display:inline-flex;align-items:center;gap:8px;padding:11px 20px;background:linear-gradient(135deg,var(--gold),#a8862d);color:var(--ink);font-family:'DM Sans',sans-serif;font-size:.76rem;font-weight:700;letter-spacing:.08em;text-transform:uppercase;text-decoration:none;border-radius:10px;transition:all .25s cubic-bezier(.34,1.56,.64,1);box-shadow:0 4px 18px rgba(201,168,76,.22);white-space:nowrap;flex-shrink:0;}
+.card-buy:hover{transform:translateY(-2px) scale(1.04);box-shadow:0 8px 28px rgba(201,168,76,.38);}
+footer{text-align:center;padding:40px 48px;border-top:1px solid rgba(255,255,255,.05);font-size:.72rem;color:var(--muted);position:relative;z-index:1;}
+
+/* MODALS */
+.overlay{position:fixed;inset:0;background:rgba(5,4,2,.92);backdrop-filter:blur(16px);z-index:999;display:none;align-items:center;justify-content:center;padding:24px;}
+.overlay.open{display:flex;}
+.modal{background:#141210;border:1px solid rgba(201,168,76,.15);border-radius:20px;width:100%;max-width:480px;padding:46px 38px;position:relative;animation:slideUp .3s cubic-bezier(.34,1.56,.64,1);box-shadow:0 40px 100px rgba(0,0,0,.6);}
+.modal.wide{max-width:560px;max-height:92vh;overflow-y:auto;}
+@keyframes slideUp{from{transform:translateY(28px);opacity:0}to{transform:translateY(0);opacity:1}}
+.mclose{position:absolute;top:16px;right:18px;background:none;border:none;color:var(--muted);cursor:pointer;font-size:1.1rem;padding:6px;line-height:1;transition:color .2s;}
+.mclose:hover{color:var(--cream);}
+.mtitle{font-family:'Playfair Display',serif;font-size:1.5rem;font-weight:700;margin-bottom:4px;}
+.msub{font-size:.8rem;color:var(--muted);margin-bottom:24px;}
+
+/* FORM */
+.fg{margin-bottom:18px;}
+label{display:block;font-size:.68rem;font-weight:600;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);margin-bottom:7px;}
+input[type=text],input[type=password],input[type=number],textarea{width:100%;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.08);border-radius:10px;padding:12px 14px;color:var(--cream);font-family:'DM Sans',sans-serif;font-size:.92rem;outline:none;transition:border-color .25s,box-shadow .25s;resize:none;}
+input:focus,textarea:focus{border-color:rgba(201,168,76,.4);box-shadow:0 0 0 3px rgba(201,168,76,.08);}
+textarea{height:96px;line-height:1.6;}
+
+/* UPLOAD */
+#finput{display:none;}
+.upzone{position:relative;border:2px dashed rgba(201,168,76,.22);border-radius:12px;padding:22px;text-align:center;transition:all .25s;cursor:pointer;}
+.upzone:hover{border-color:rgba(201,168,76,.5);background:rgba(201,168,76,.04);}
+.upzone.drag-over{border-color:rgba(201,168,76,.6);background:rgba(201,168,76,.07);}
+/* The real file input covers the entire zone invisibly */
+.upzone input[type=file]{position:absolute;inset:0;width:100%;height:100%;opacity:0;cursor:pointer;font-size:0;}
+.uico{font-size:1.8rem;margin-bottom:6px;pointer-events:none;}
+.utxt{font-size:.76rem;color:var(--muted);margin-bottom:4px;pointer-events:none;}
+.utxt strong{color:var(--gold);}
+#prev-img{width:100%;height:130px;object-fit:cover;border-radius:8px;margin-top:12px;display:none;pointer-events:none;}
+.prev-clear{display:none;margin-top:8px;font-size:.72rem;color:var(--muted);cursor:pointer;text-decoration:underline;position:relative;z-index:2;}
+.prev-clear:hover{color:#e06060;}
+
+/* BUTTONS */
+.btn-row{display:flex;gap:8px;margin-top:4px;}
+.btn-p{flex:1;padding:13px 14px;background:linear-gradient(135deg,var(--gold),#a8862d);color:var(--ink);border:none;border-radius:10px;font-family:'DM Sans',sans-serif;font-size:.8rem;font-weight:700;letter-spacing:.06em;text-transform:uppercase;cursor:pointer;transition:all .25s;}
+.btn-p:hover{opacity:.9;transform:translateY(-1px);}
+.btn-pub{flex:1;padding:13px 14px;background:linear-gradient(135deg,#27ae60,#1e8449);color:#fff;border:none;border-radius:10px;font-family:'DM Sans',sans-serif;font-size:.8rem;font-weight:700;letter-spacing:.06em;text-transform:uppercase;cursor:pointer;transition:all .25s;display:flex;align-items:center;justify-content:center;gap:7px;}
+.btn-pub:hover{opacity:.9;transform:translateY(-1px);box-shadow:0 6px 20px rgba(39,174,96,.3);}
+.btn-s{padding:13px 14px;background:none;color:var(--muted);border:1px solid rgba(255,255,255,.08);border-radius:10px;font-family:'DM Sans',sans-serif;font-size:.8rem;cursor:pointer;transition:all .25s;}
+.btn-s:hover{color:var(--cream);border-color:rgba(255,255,255,.2);}
+.ferr{font-size:.7rem;color:#e06060;margin-top:4px;}
+.sep{height:1px;background:rgba(255,255,255,.06);margin:18px 0;}
+
+/* ADMIN LIST */
+.alist-title{font-size:.68rem;font-weight:600;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);margin-bottom:10px;}
+.aitem{display:flex;align-items:center;gap:12px;padding:11px 12px;border-radius:10px;background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.05);margin-bottom:7px;transition:background .2s;}
+.aitem:hover{background:rgba(255,255,255,.05);}
+.athumb{width:40px;height:54px;border-radius:4px;object-fit:cover;flex-shrink:0;background:rgba(201,168,76,.1);}
+.athumb-ph{width:40px;height:54px;border-radius:4px;flex-shrink:0;background:rgba(201,168,76,.08);display:flex;align-items:center;justify-content:center;font-size:1.1rem;}
+.ainfo{flex:1;min-width:0;}
+.aname{font-size:.83rem;font-weight:600;color:var(--cream);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.aprice{font-size:.7rem;color:var(--gold);}
+.badge{display:inline-block;padding:2px 7px;border-radius:999px;font-size:.6rem;font-weight:600;letter-spacing:.08em;text-transform:uppercase;margin-top:2px;}
+.bdraft{background:rgba(122,114,101,.2);color:var(--muted);}
+.bpub{background:rgba(39,174,96,.15);color:#2ecc71;}
+.abtns{display:flex;gap:5px;flex-shrink:0;}
+.abtn{padding:5px 11px;border-radius:7px;border:none;cursor:pointer;font-family:'DM Sans',sans-serif;font-size:.7rem;font-weight:600;transition:all .2s;}
+.abtn-e{background:rgba(201,168,76,.15);color:var(--gold);}
+.abtn-e:hover{background:rgba(201,168,76,.28);}
+.abtn-d{background:rgba(192,57,43,.15);color:#e74c3c;}
+.abtn-d:hover{background:rgba(192,57,43,.28);}
+.add-btn{width:100%;padding:12px;background:rgba(201,168,76,.06);border:1px dashed rgba(201,168,76,.22);border-radius:10px;color:var(--gold);font-family:'DM Sans',sans-serif;font-size:.8rem;font-weight:600;cursor:pointer;transition:all .2s;margin-top:2px;display:flex;align-items:center;justify-content:center;gap:7px;}
+.add-btn:hover{background:rgba(201,168,76,.12);border-color:rgba(201,168,76,.4);}
+
+/* TOAST */
+.toast{position:fixed;bottom:32px;left:50%;transform:translateX(-50%) translateY(100px);background:var(--gold);color:var(--ink);font-size:.82rem;font-weight:700;padding:13px 22px;border-radius:999px;z-index:9999;transition:transform .4s cubic-bezier(.34,1.56,.64,1);white-space:nowrap;}
+.toast.show{transform:translateX(-50%) translateY(0);}
+.toast.green{background:#27ae60;color:#fff;}
+
+@media(max-width:860px){
+  nav{padding:18px 20px;}
+  #catalog{padding:28px 20px 60px;gap:22px;}
+  .cat-header{padding:36px 20px 0;flex-direction:column;align-items:flex-start;}
+  .modal{padding:30px 20px;}
+}
+@media(max-width:500px){#catalog{grid-template-columns:1fr;}}
+</style>
+</head>
+<body>
+
+<div class="ambient a1"></div>
+<div class="ambient a2"></div>
+
+<nav>
+  <div class="nav-logo">book<span>lumiere</span></div>
+  <button class="admin-btn" onclick="openLogin()">&#9881; Admin</button>
+</nav>
+
+<div class="page">
+  <div id="empty-state">
+    <div class="empty-icon">&#128218;</div>
+    <div class="empty-title">Nenhum ebook publicado ainda</div>
+    <div class="empty-sub">Entre no painel admin e publique o seu primeiro ebook.</div>
+  </div>
+
+  <div class="cat-header" id="cat-header" style="display:none">
+    <div class="cat-heading">Ebooks <em>Exclusivos</em></div>
+    <div class="cat-count" id="cat-count"></div>
+  </div>
+
+  <div id="catalog"></div>
+
+  <footer>&copy; 2026 BookLumiere &middot; Todos os direitos reservados</footer>
+</div>
+
+<!-- LOGIN MODAL -->
+<div class="overlay" id="ov-login">
+  <div class="modal">
+    <button class="mclose" onclick="closeLogin()">&#10005;</button>
+    <div class="mtitle">Acesso Admin</div>
+    <div class="msub">Digite sua senha para acessar o painel</div>
+    <div class="fg">
+      <label>Senha</label>
+      <input type="password" id="lpw" placeholder="&#8226;&#8226;&#8226;&#8226;&#8226;&#8226;&#8226;&#8226;" onkeydown="if(event.key==='Enter')doLogin()" />
+      <div class="ferr" id="lerr"></div>
+    </div>
+    <div class="btn-row">
+      <button class="btn-p" onclick="doLogin()">Entrar</button>
+      <button class="btn-s" onclick="closeLogin()">Cancelar</button>
+    </div>
+  </div>
+</div>
+
+<!-- ADMIN MODAL -->
+<div class="overlay" id="ov-admin">
+  <div class="modal wide">
+    <button class="mclose" onclick="closeAdmin()">&#10005;</button>
+    <div class="mtitle">Painel Admin</div>
+    <div class="msub" id="asub">Novo ebook</div>
+
+    <!-- COVER UPLOAD ZONE -->
+    <div class="fg">
+      <label>Capa do Ebook</label>
+      <div class="upzone" id="upzone">
+        <!-- Input invisível cobre toda a zona — clique em qualquer lugar abre o seletor -->
+        <input type="file" id="finput" accept="image/*" onchange="prevCover(event)" />
+        <div class="uico">&#128444;&#65039;</div>
+        <div class="utxt"><strong>Clique aqui</strong> ou arraste a imagem</div>
+        <img id="prev-img" src="" alt="preview" />
+        <div class="prev-clear" id="pclear" onclick="clearCover(event)">&#10005; Remover imagem</div>
+      </div>
+    </div>
+
+    <div class="fg">
+      <label>Titulo do Ebook</label>
+      <input type="text" id="atitle" placeholder="Ex: O Guia Definitivo do Empreendedor" />
+    </div>
+
+    <div class="fg">
+      <label>Descricao / Copy de venda</label>
+      <textarea id="adesc" placeholder="Descreva os beneficios, o que o leitor vai aprender..."></textarea>
+    </div>
+
+    <div class="fg">
+      <label>Preco (R$)</label>
+      <input type="number" id="aprice" placeholder="97.00" step="0.01" min="0" />
+    </div>
+
+    <div class="fg">
+      <label>Link da Hotmart</label>
+      <input type="text" id="aurl" placeholder="https://hotmart.com/product/seu-ebook" />
+    </div>
+
+    <div class="btn-row">
+      <button class="btn-p" onclick="saveDraft()">&#128190; Rascunho</button>
+      <button class="btn-pub" onclick="publishNow()">
+        <svg width="13" height="13" viewBox="0 0 13 13" fill="none">
+          <circle cx="6.5" cy="6.5" r="5.5" stroke="white" stroke-width="1.3"/>
+          <path d="M4.5 6.5l1.5 1.5 3-3" stroke="white" stroke-width="1.3" stroke-linecap="round"/>
+        </svg>
+        Publicar
+      </button>
+      <button class="btn-s" onclick="cancelEdit()">&#10005;</button>
+    </div>
+
+    <div class="sep"></div>
+
+    <div class="alist-title">Seus ebooks</div>
+    <div id="alist"></div>
+    <button class="add-btn" onclick="newForm()">&#43; Adicionar novo ebook</button>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+var PW = '123qwe';
+var KEY = 'bl_books_v4';
+var books = [];
+var editId = null;
+var draftCover = null;
+
+// LOAD
+(function(){
+  try{ books = JSON.parse(localStorage.getItem(KEY)) || []; }catch(e){ books=[]; }
+  renderHome();
+})();
+
+function save(){ localStorage.setItem(KEY, JSON.stringify(books)); }
+
+// RENDER HOME
+function renderHome(){
+  var pub = books.filter(function(b){ return b.published; });
+  document.getElementById('empty-state').style.display = pub.length ? 'none' : 'flex';
+  document.getElementById('cat-header').style.display = pub.length ? 'flex' : 'none';
+  document.getElementById('cat-count').textContent = pub.length + (pub.length===1?' titulo disponivel':' titulos disponiveis');
+
+  document.getElementById('catalog').innerHTML = pub.map(function(b,i){
+    var coverHtml = b.cover
+      ? '<img src="'+b.cover+'" alt="'+eh(b.title)+'" />'
+      : '<div class="card-cover-ph"><svg width="34" height="34" viewBox="0 0 34 34" fill="none"><rect x="3" y="3" width="28" height="28" rx="3" stroke="#c9a84c" stroke-width="1.4"/><path d="M9 13h16M9 19h10" stroke="#c9a84c" stroke-width="1.4" stroke-linecap="round"/></svg><span>Sem capa</span></div>';
+
+    return '<div class="ebook-card" style="animation-delay:'+( i*0.07)+'s">'
+      + '<div class="card-cover">'+ coverHtml +'</div>'
+      + '<div class="card-body">'
+      + '<span class="card-eyebrow">Ebook Digital</span>'
+      + '<div class="card-title">'+ eh(b.title) +'</div>'
+      + '<div class="card-desc">'+ eh(b.description) +'</div>'
+      + '</div>'
+      + '<div class="card-footer">'
+      + '<div><div class="card-plabel">Por apenas</div><div class="card-price">'+ fmtPrice(b.price) +'</div></div>'
+      + '<a class="card-buy" href="'+ eh(b.url||'#') +'" target="_blank" rel="noopener">'
+      + '<svg width="11" height="11" viewBox="0 0 11 11" fill="none"><path d="M5.5 1L10 5.5L5.5 10M1 5.5h9" stroke="#0d0d0d" stroke-width="1.7" stroke-linecap="round"/></svg>'
+      + 'Comprar na Hotmart</a>'
+      + '</div></div>';
+  }).join('');
+}
+
+// RENDER ADMIN LIST
+function renderAlist(){
+  var el = document.getElementById('alist');
+  if(!books.length){
+    el.innerHTML = '<div style="font-size:.78rem;color:var(--muted);padding:8px 0 10px">Nenhum ebook criado ainda.</div>';
+    return;
+  }
+  el.innerHTML = books.map(function(b){
+    var thumb = b.cover
+      ? '<img class="athumb" src="'+b.cover+'" alt="" />'
+      : '<div class="athumb-ph">&#128214;</div>';
+    return '<div class="aitem">'
+      + thumb
+      + '<div class="ainfo">'
+      + '<div class="aname">'+ eh(b.title||'Sem titulo') +'</div>'
+      + '<div class="aprice">'+ fmtPrice(b.price) +'</div>'
+      + '<span class="badge '+(b.published?'bpub':'bdraft')+'">'+(b.published?'Publicado':'Rascunho')+'</span>'
+      + '</div>'
+      + '<div class="abtns">'
+      + '<button class="abtn abtn-e" onclick="editBook(\''+b.id+'\')">Editar</button>'
+      + '<button class="abtn abtn-d" onclick="delBook(\''+b.id+'\')">Excluir</button>'
+      + '</div></div>';
+  }).join('');
+}
+
+// HELPERS
+function eh(s){ s=s||''; return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
+function fmtPrice(p){ var n=parseFloat(p); return isNaN(n)?'R$ --':'R$ '+n.toFixed(2).replace('.',','); }
+function uid(){ return Date.now().toString(36)+Math.random().toString(36).slice(2,6); }
+
+// COVER HELPERS
+function showPreview(src){
+  document.getElementById('prev-img').src = src;
+  document.getElementById('prev-img').style.display = 'block';
+  document.getElementById('pclear').style.display = 'block';
+}
+function clearCover(e){
+  if(e) e.stopPropagation();
+  draftCover = null;
+  document.getElementById('prev-img').src = '';
+  document.getElementById('prev-img').style.display = 'none';
+  document.getElementById('pclear').style.display = 'none';
+  document.getElementById('finput').value = '';
+}
+function prevCover(e){
+  var f = e.target.files[0];
+  if(!f) return;
+  var r = new FileReader();
+  r.onload = function(ev){ draftCover = ev.target.result; showPreview(draftCover); };
+  r.readAsDataURL(f);
+}
+
+// FORM
+function newForm(){
+  editId = null; draftCover = null;
+  document.getElementById('atitle').value = '';
+  document.getElementById('adesc').value = '';
+  document.getElementById('aprice').value = '';
+  document.getElementById('aurl').value = '';
+  clearCover();
+  document.getElementById('asub').textContent = 'Novo ebook';
+  document.querySelector('#ov-admin .modal').scrollTop = 0;
+}
+function cancelEdit(){ if(!books.length){ closeAdmin(); return; } newForm(); }
+
+function getFormData(published){
+  var title = document.getElementById('atitle').value.trim();
+  if(!title){ toast('Adicione um titulo.',false); return null; }
+  return {
+    id: editId || uid(),
+    title: title,
+    description: document.getElementById('adesc').value.trim(),
+    price: document.getElementById('aprice').value.trim(),
+    url: document.getElementById('aurl').value.trim() || '#',
+    cover: draftCover,
+    published: published
+  };
+}
+function upsert(book){
+  var i = books.findIndex(function(b){ return b.id===book.id; });
+  if(i>=0) books[i]=book; else books.unshift(book);
+  editId = book.id;
+}
+function saveDraft(){
+  var b = getFormData(false); if(!b) return;
+  upsert(b); save(); renderHome(); renderAlist();
+  document.getElementById('asub').textContent = 'Editando: '+b.title;
+  toast('Rascunho salvo!', false);
+}
+function publishNow(){
+  var b = getFormData(true); if(!b) return;
+  upsert(b); save(); renderHome(); renderAlist();
+  document.getElementById('asub').textContent = 'Editando: '+b.title;
+  toast('Ebook publicado na home!', true);
+}
+function editBook(id){
+  var b = books.find(function(x){ return x.id===id; }); if(!b) return;
+  editId = id; draftCover = b.cover || null;
+  document.getElementById('atitle').value = b.title || '';
+  document.getElementById('adesc').value = b.description || '';
+  document.getElementById('aprice').value = b.price || '';
+  document.getElementById('aurl').value = (b.url && b.url!=='#') ? b.url : '';
+  document.getElementById('asub').textContent = 'Editando: '+(b.title||'ebook');
+  if(b.cover) showPreview(b.cover); else clearCover();
+  document.querySelector('#ov-admin .modal').scrollTop = 0;
+}
+function delBook(id){
+  if(!confirm('Excluir este ebook?')) return;
+  books = books.filter(function(b){ return b.id!==id; });
+  if(editId===id) newForm();
+  save(); renderHome(); renderAlist();
+  toast('Ebook excluido.', false);
+}
+
+// LOGIN
+function openLogin(){
+  document.getElementById('ov-login').classList.add('open');
+  setTimeout(function(){ document.getElementById('lpw').focus(); }, 100);
+}
+function closeLogin(){
+  document.getElementById('ov-login').classList.remove('open');
+  document.getElementById('lpw').value = '';
+  document.getElementById('lerr').textContent = '';
+}
+function doLogin(){
+  if(document.getElementById('lpw').value === PW){ closeLogin(); openAdmin(); }
+  else{ document.getElementById('lerr').textContent = 'Senha incorreta.'; document.getElementById('lpw').value=''; document.getElementById('lpw').focus(); }
+}
+
+// ADMIN
+function openAdmin(){ newForm(); renderAlist(); document.getElementById('ov-admin').classList.add('open'); }
+function closeAdmin(){ document.getElementById('ov-admin').classList.remove('open'); }
+
+// TOAST
+function toast(msg, green){
+  var t = document.getElementById('toast');
+  t.textContent = msg;
+  t.className = 'toast' + (green ? ' green' : '');
+  t.classList.add('show');
+  setTimeout(function(){ t.classList.remove('show'); }, 3200);
+}
+
+// DRAG & DROP
+var uz = document.getElementById('upzone');
+uz.addEventListener('dragover', function(e){ e.preventDefault(); uz.classList.add('drag-over'); });
+uz.addEventListener('dragleave', function(){ uz.classList.remove('drag-over'); });
+uz.addEventListener('drop', function(e){
+  e.preventDefault(); uz.classList.remove('drag-over');
+  var f = e.dataTransfer.files[0];
+  if(f && f.type.startsWith('image/')){
+    var r = new FileReader();
+    r.onload = function(ev){ draftCover = ev.target.result; showPreview(draftCover); };
+    r.readAsDataURL(f);
+  }
+});
+
+// CLOSE ON BACKGROUND CLICK
+document.getElementById('ov-login').addEventListener('click', function(e){ if(e.target===this) closeLogin(); });
+document.getElementById('ov-admin').addEventListener('click', function(e){ if(e.target===this) closeAdmin(); });
+</script>
+</body>
+</html>
