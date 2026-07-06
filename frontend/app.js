@@ -229,3 +229,41 @@ function delBook(id){
   renderHome(); renderAlist();
   toast('Ebook excluído.');
 }
+
+/* ═══════════════════════════════════════
+   LOGIN
+═══════════════════════════════════════ */
+function openLogin(){
+  document.getElementById('ov-login').classList.add('open');
+  setTimeout(function(){ document.getElementById('lpw').focus(); },100);
+}
+function closeLogin(){
+  document.getElementById('ov-login').classList.remove('open');
+  document.getElementById('lpw').value='';
+  document.getElementById('lerr').textContent='';
+}
+function doLogin(){
+  if(document.getElementById('lpw').value===PW){ closeLogin(); openAdmin(); }
+  else{ document.getElementById('lerr').textContent='Senha incorreta.'; document.getElementById('lpw').value=''; document.getElementById('lpw').focus(); }
+}
+
+/* ═══════════════════════════════════════
+   ADMIN
+═══════════════════════════════════════ */
+function openAdmin(){ newForm(); renderAlist(); document.getElementById('ov-admin').classList.add('open'); }
+function closeAdmin(){ document.getElementById('ov-admin').classList.remove('open'); }
+
+/* ═══════════════════════════════════════
+   TOAST
+═══════════════════════════════════════ */
+function toast(msg, green){
+  var t = document.getElementById('toast');
+  t.textContent = msg;
+  t.className = 'toast'+(green?' green':'');
+  t.classList.add('show');
+  setTimeout(function(){ t.classList.remove('show'); }, 3000);
+}
+
+/* close modals on backdrop click */
+document.getElementById('ov-login').addEventListener('click', function(e){ if(e.target===this) closeLogin(); });
+document.getElementById('ov-admin').addEventListener('click', function(e){ if(e.target===this) closeAdmin(); });
