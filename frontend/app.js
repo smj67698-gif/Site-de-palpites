@@ -158,4 +158,74 @@ function removeCover(e){
   });
 })();
 
-  
+/* ═══════════════════════════════════════
+   FORM
+═══════════════════════════════════════ */
+function newForm(){
+  editId = null; draftCov = null;
+  document.getElementById('f-title').value = '';
+  document.getElementById('f-desc').value  = '';
+  document.getElementById('f-price').value = '';
+  document.getElementById('f-url').value   = '';
+  document.getElementById('asub').textContent = 'Novo ebook';
+  document.getElementById('up-preview').style.display = 'none';
+  document.getElementById('up-remove').style.display  = 'none';
+  document.getElementById('up-preview').src = '';
+  document.getElementById('file-input').value = '';
+  document.querySelector('#ov-admin .modal').scrollTop = 0;
+}
+function cancelEdit(){
+  if(!books.length){ closeAdmin(); return; }
+  newForm();
+}
+function getForm(published){
+  var title = document.getElementById('f-title').value.trim();
+  if(!title){ toast('⚠ Adicione um título.'); return null; }
+  return {
+    id: editId || uid(),
+    title: title,
+    description: document.getElementById('f-desc').value.trim(),
+    price: document.getElementById('f-price').value.trim(),
+    url: document.getElementById('f-url').value.trim() || '#',
+    cover: draftCov,          // may be null if no image
+    published: published
+  };
+}
+function upsert(b){
+  var i = books.findIndex(function(x){ return x.id===b.id; });
+  if(i>=0) books[i]=b; else books.unshift(b);
+  editId = b.id;
+}
+function saveDraft(){
+  var b = getForm(false); if(!b) return;
+  upsert(b); saveAll(); renderHome(); renderAlist();
+  document.getElementById('asub').textContent = 'Editando: '+b.title;
+  toast('💾 Rascunho salvo!');
+}
+function publishNow(){
+  var b = getForm(true); if(!b) return;
+  upsert(b); saveAll(); renderHome(); renderAlist();
+  document.getElementById('asub').textContent = 'Editando: '+b.title;
+  toast('🚀 Publicado na home!', true);
+}
+function editBook(id){
+  var b = books.find(function(x){ return x.id===id; }); if(!b) return;
+  editId = id; draftCov = b.cover || null;
+  document.getElementById('f-title').value = b.title||'';
+  document.getElementById('f-desc').value  = b.description||'';
+  document.getElementById('f-price').value = b.price||'';
+  document.getElementById('f-url').value   = (b.url&&b.url!=='#')?b.url:'';
+  document.getElementById('asub').textContent = 'Editando: '+(b.title||'ebook');
+  if(b.cover) showPreview(b.cover);
+  else { document.getElementById('up-preview').style.display='none'; document.getElementById('up-remove').style.display='none'; }
+  document.querySelector('#ov-admin .modal').scrollTop = 0;
+}
+function delBook(id){
+  if(!confirm('Excluir este ebook?')) return;
+  books = books.filter(function(b){ return b.id!==id; });
+  deleteCover(id);
+  saveMeta(books);
+  if(editId===id) newForm();
+  renderHome(); renderAlist();
+  toast('Ebook excluído.');
+}
