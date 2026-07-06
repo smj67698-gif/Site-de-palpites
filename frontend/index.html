@@ -307,57 +307,6 @@ textarea{height:92px;line-height:1.6;}
 
 
 
-/* ═══════════════════════════════════════
-   HELPERS
-═══════════════════════════════════════ */
-function eh(s){ s=s||''; return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
-function fmt(p){ var n=parseFloat(p); return isNaN(n)?'R$ —':'R$ '+n.toFixed(2).replace('.',','); }
-function uid(){ return Date.now().toString(36)+Math.random().toString(36).slice(2,6); }
-
-/* ═══════════════════════════════════════
-   UPLOAD
-═══════════════════════════════════════ */
-function onFileChange(e){
-  var f = e.target.files[0];
-  if(!f || !f.type.startsWith('image/')) return;
-  var reader = new FileReader();
-  reader.onload = function(ev){
-    draftCov = ev.target.result;
-    showPreview(draftCov);
-  };
-  reader.readAsDataURL(f);
-}
-function showPreview(src){
-  var img = document.getElementById('up-preview');
-  var rem = document.getElementById('up-remove');
-  img.src = src;
-  img.style.display = 'block';
-  rem.style.display = 'block';
-}
-function removeCover(e){
-  e.preventDefault(); // stop label click from opening file picker
-  draftCov = null;
-  var img = document.getElementById('up-preview');
-  var rem = document.getElementById('up-remove');
-  img.src = ''; img.style.display = 'none';
-  rem.style.display = 'none';
-  document.getElementById('file-input').value = '';
-}
-
-/* drag & drop onto the label zone */
-(function(){
-  var zone = document.getElementById('upzone');
-  zone.addEventListener('dragover',  function(e){ e.preventDefault(); zone.classList.add('dragover'); });
-  zone.addEventListener('dragleave', function(){ zone.classList.remove('dragover'); });
-  zone.addEventListener('drop', function(e){
-    e.preventDefault(); zone.classList.remove('dragover');
-    var f = e.dataTransfer.files[0];
-    if(!f || !f.type.startsWith('image/')) return;
-    var r = new FileReader();
-    r.onload = function(ev){ draftCov = ev.target.result; showPreview(draftCov); };
-    r.readAsDataURL(f);
-  });
-})();
 
 /* ═══════════════════════════════════════
    FORM
